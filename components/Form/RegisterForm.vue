@@ -120,7 +120,7 @@ export default {
       if (this.errorMessage) return;
 
       try {
-        const response = await fetch("http://api.breathesafe.site/api/register", {
+        const response = await fetch("https://api.breathesafe.site/api/register", {
 
           method: "POST",
           headers: {

@@ -16,7 +16,8 @@ export default {
     // Función para obtener la calidad del aire desde la nueva API
     async function fetchAirQualityData() {
       try {
-        const response = await fetch('http://localhost:8080/api/sensor-data');
+        //const response = await fetch('http://localhost:8080/api/sensor-data');
+        const response = await fetch('https://api.breathesafe.site/api/sensor-data');
         if (!response.ok) {
           throw new Error(`Error en la respuesta de la red: ${response.status}`);
         }

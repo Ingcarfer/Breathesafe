@@ -46,10 +46,11 @@ export default {
     const Links = [
       { name: "Inicio", link: "/home" },
       { name: "Información", link: "/information" },
+      { name: "Estadisticas", link: "/home/statistics" },
     ];
 
     const router = useRouter(); // Instancia de router
-    const username = ref('Usuario'); // Variable reactiva para el nombre de usuario
+    const username = ref(''); // Variable reactiva para el nombre de usuario
 
     const toggleMenu = () => {
       open.value = !open.value;
@@ -67,7 +68,8 @@ export default {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const response = await fetch('http://localhost:8080/api/users/me', {
+          //const response = await fetch('http://localhost:8080/api/users/me', {
+          const response = await fetch('https://api.breathesafe.site/api/users/me', {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,

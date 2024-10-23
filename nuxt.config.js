@@ -1,7 +1,7 @@
 // nuxt.config.ts
 export default defineNuxtConfig({
   // Configuración del servidor
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
   publicRuntimeConfig: {
     apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8080/api' // Cambia la URL según tu configuración
   },
