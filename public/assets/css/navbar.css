@@ -1,0 +1,32 @@
+:root {
+  --primary-bg: #1a202c; /* Fondo principal */
+  --primary-text: #cfcfcf; /* Texto principal */
+  --accent-color: #3498db; /* Color de acento */
+  --hover-color: #65e0c5;
+  --icon-color: #cfcfcf;
+}
+
+.bg-primary {
+  background-color: var(--primary-bg);
+}
+
+.text-primary {
+  color: var(--primary-text);
+}
+
+.text-hover {
+  color: inherit; /* Mantiene el color original */
+  transition: color 0.3s ease-in-out; /* Suaviza la transición del color */
+}
+
+.text-hover:hover {
+  color: var(--hover-color); /* Aplica el color definido en la variable */
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+.navbar-icon {
+  color: var(--icon-color) !important;
+  /* Color del ícono, ajusta según sea necesario */
+}

@@ -1,0 +1,109 @@
+/* Definir variables globales en :root */
+:root {
+  --secondary-bg: #1a202c; /* Fondo principal */
+  --primary-color: #4a90e2; /* Color principal */
+  --primary-hover-color: #357abd; /* Color al pasar el cursor */
+  --text-color: rgb(6, 6, 6); /* Color del texto */
+  --label-color: gray; /* Color de las etiquetas */
+  --label-hover-color: black; /* Color de las etiquetas al pasar el cursor */
+  --input-border-color: rgb(
+    83,
+    209,
+    159
+  ); /* Color del borde de los inputs oprimido */
+  --input-border-color-focus: rgb(
+    83,
+    209,
+    159
+  ); /* Color del borde al hacer foco */
+  --input-border-color-hover: rgb(
+    83,
+    209,
+    159
+  ); /* Color del borde al pasar el mouse */
+  --input-border-color-default: #4a90e2; /* Color del borde por defecto */
+  --input-background: transparent; /* Fondo del input */
+  --box-shadow-color: rgba(
+    0,
+    0,
+    0,
+    0.1
+  ); /* Color de la sombra del contenedor */
+  --border-radius: 0.5rem; /* Radio de los bordes */
+  --font-size: 1rem; /* Tamaño de fuente */
+  --border-gradient: linear-gradient(
+    90deg,
+    #cce6db 0%,
+    #cce0f0 100%
+  ); /* Degradado de borde */
+}
+
+.bg-secondary {
+  background-color: var(--secondary-bg);
+}
+/* Ajustar altura de los campos */
+input {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: var(--font-size);
+  color: var(--text-color);
+  background-color: var(--input-background);
+  border: 2px solid var(--input-border-color-default); /* Color de borde por defecto */
+  border-radius: var(--border-radius);
+  background-image: var(
+    --border-gradient
+  ); /* Aplicar el degradado como fondo */
+  background-clip: padding-box; /* Hace que el fondo no cubra el área de relleno */
+  transition: border-color 0.3s; /* Transición suave para el cambio de color */
+}
+
+/* Cambiar el borde al hacer foco */
+input:focus {
+  border: 2px solid var(--input-border-color-focus); /* Cambiar el borde al hacer foco */
+  box-shadow: 0 0 0 2px var(--primary-color); /* Sombra como borde al hacer foco */
+}
+
+/* Cambiar el borde al pasar el mouse */
+input:hover {
+  border: 2px solid var(--input-border-color-hover); /* Cambiar el borde al pasar el mouse */
+}
+
+/* Mantener el borde por defecto si el input está vacío y no enfocado */
+input:placeholder-shown {
+  border: 2px solid var(--input-border-color-default); /* Borde por defecto cuando no está escribiendo */
+}
+
+/* Cambiar el borde al pasar el mouse cuando el placeholder es visible */
+input:placeholder-shown:hover {
+  border: 2px solid var(--input-border-color-hover); /* Cambiar el borde al pasar el mouse */
+}
+
+/* Mantener la etiqueta dentro del campo */
+label {
+  left: 0.75rem;
+  color: var(--label-color);
+  transition: transform 0.2s ease, left 0.2s ease;
+}
+
+/* Estilos para el desplazamiento y la transformación de la etiqueta */
+input:focus ~ label,
+input:placeholder-shown ~ label {
+  left: 1rem;
+  transform: translateY(-1.5rem) scale(0.75);
+}
+
+/* Sombreado personalizado para el contenedor */
+.custom-shadow {
+  box-shadow: 0 4px 20px var(--box-shadow-color);
+}
+
+/* Estilo del ícono de contraseña (mostrar/ocultar) */
+i {
+  cursor: pointer;
+  color: var(--label-color);
+  transition: color 0.2s ease;
+}
+
+i:hover {
+  color: var(--label-hover-color);
+}
