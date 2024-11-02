@@ -2,8 +2,10 @@
 export default defineNuxtConfig({
   // Configuración del servidor
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
-  publicRuntimeConfig: {
-    apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8080/api' // Cambia la URL según tu configuración
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL ?? 'http://localhost:8080/api' ,// Cambia la URL según tu configuración
+    },
   },
   router: {
     middleware: ['auth'], // Esto asegura que el middleware 'auth' se aplique globalmente
@@ -36,8 +38,11 @@ export default defineNuxtConfig({
         {
           src: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
           defer: true
-        }
-      ]
+        },{
+            src:'https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.7/pdfobject.min.js' ,
+            defer: true
+      
+      }   ]
     }
   },
 

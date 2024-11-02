@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Lista de rutas públicas que no requieren autenticación
-  const publicRoutes = ['/', '/auth', '/auth/register'];
+  const publicRoutes = ['/', '/auth', '/auth/register', '/information/prueba'];
 
   // Si la ruta actual es pública, no aplicamos el middleware
   if (publicRoutes.includes(to.path)) {
@@ -21,6 +21,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Si el usuario no está autenticado, redirigir a la página de login
   if (!isAuthenticated()) {
-      return navigateTo('/auth'); // Redirige a la página de login
+      return navigateTo('/'); // Redirige a la página de login
   }
 });

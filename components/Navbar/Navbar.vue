@@ -32,73 +32,65 @@
   </div>
 </template>
 
-<script>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // Importar useRouter
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter, useRuntimeConfig } from '#imports';
 import Button from '../Button/Button.vue';
-import '@/public/assets/css/navbar.css';
 
-export default {
-  components: { Button },
+const open = ref(false);
+const Links = [
+  { name: "Inicio", link: "/home" },
+  { name: "Información", link: "/information" },
+  { name: "Estadísticas", link: "/home/statistics" },
+  { name: "prueba", link: "/information/prueba" },
+];
 
-  setup() {
-    const open = ref(false);
-    const Links = [
-      { name: "Inicio", link: "/home" },
-      { name: "Información", link: "/information" },
-      { name: "Estadisticas", link: "/home/statistics" },
-    ];
+const router = useRouter();
+const username = ref('');
+const config = useRuntimeConfig();
 
-    const router = useRouter(); // Instancia de router
-    const username = ref(''); // Variable reactiva para el nombre de usuario
+const toggleMenu = () => {
+  open.value = !open.value;
+};
 
-    const toggleMenu = () => {
-      open.value = !open.value;
-    };
+// Función para cerrar sesión
+const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  router.push('/');
+};
 
-    // Función para cerrar sesión
-    const logout = () => {
-      localStorage.removeItem('token'); // Eliminar el token
-      localStorage.removeItem('username'); // Opcional: eliminar el nombre de usuario
-      router.push('/'); // Redirigir a la página de autenticación
-    };
-
-    // Función para obtener el nombre del usuario
-    const fetchUsername = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          //const response = await fetch('http://localhost:8080/api/users/me', {
-          const response = await fetch('https://api.breathesafe.site/api/users/me', {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            username.value = data.data.name; // Acceder al nombre del usuario
-            // También puedes almacenar el nombre en localStorage si lo deseas
-            localStorage.setItem('username', data.data.name);
-          } else {
-            console.error('Error al obtener el nombre del usuario:', response.status);
-          }
-        } catch (error) {
-          console.error('Error en la solicitud:', error);
+// Función para obtener el nombre del usuario
+const fetchUsername = async () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const url = config.public.apiUrl + "/users/me";
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        username.value = data.data.name;
+        localStorage.setItem('username', data.data.name);
+      } else {
+        console.error('Error al obtener el nombre del usuario:', response.status);
       }
-    };
-
-    // Llamar a la función al montar el componente
-    onMounted(() => {
-      fetchUsername();
-    });
-
-    return { Links, open, toggleMenu, logout, username }; // Retorno
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   }
-}
+};
+
+// Llamar a la función al montar el componente
+onMounted(() => {
+  fetchUsername();
+});
 </script>
 
 <style scoped></style>

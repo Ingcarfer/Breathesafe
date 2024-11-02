@@ -77,11 +77,13 @@
   </div>
 </template>
 
-<script>
+<script setup>
+// Cambia "export default" por una constante
 import Button from "../Button/Button.vue";
 import "@/public/assets/css/form.css";
+const config = useRuntimeConfig();
 
-export default {
+const RegisterForm = {
   components: { Button },
   data() {
     return {
@@ -120,8 +122,9 @@ export default {
       if (this.errorMessage) return;
 
       try {
-        const response = await fetch("https://api.breathesafe.site/api/register", {
+        const url = config.public.apiUrl + "/register";
 
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             'Accept': 'application/json',
@@ -160,7 +163,7 @@ export default {
       this.$router.push("/"); // Redirigir al usuario a la página de inicio
     }
   }
-}
+};
 </script>
 
 <style scoped>

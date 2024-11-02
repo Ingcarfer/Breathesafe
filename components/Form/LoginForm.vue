@@ -52,6 +52,7 @@ import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Button from '../Button/Button.vue';
 
+const config = useRuntimeConfig();
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
@@ -78,8 +79,7 @@ const submitForm = async () => {
     return;
   }
 
-  const url = 'https://api.breathesafe.site/api/login'; // URL completa de la API
-
+  const url = config.public.apiUrl + "/login";
   const datos = {
     email: email.value,
     password: password.value

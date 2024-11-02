@@ -7,9 +7,10 @@
     <div class="flex items-center mb-2">
       <h3 class="mr-2">Calidad del aire:</h3>
       <div class="locality-description text-2xl font-bold" :class="aqiColorClass">
-        {{ locality.aqi !== null ? locality.description : '--' }}
+        {{ locality.aqi !== null ? getAirQualityDescription(locality.aqi) : '--' }}
       </div>
     </div>
+
     <div class="flex items-center mb-2">
       <h3 class="mr-2">AQI:</h3>
       <div class="locality-aqi text-3xl font-bold text-center" :class="aqiColorClass">
@@ -21,7 +22,6 @@
     <div class="locality-details text-sm" v-if="showDetails">
       <p>Humedad: {{ locality.humidity }}</p>
       <p>Temperatura: {{ locality.temperature }}</p>
-
     </div>
   </div>
 </template>
@@ -52,6 +52,13 @@ export default {
   methods: {
     toggleDetails() {
       this.showDetails = !this.showDetails; // Alternar la visibilidad de los detalles
+    },
+    getAirQualityDescription(aqi) {
+      if (aqi <= 50) return 'Buena';
+      if (aqi <= 100) return 'Moderada';
+      if (aqi <= 150) return 'Dañina para grupos sensibles';
+      if (aqi <= 200) return 'Muy poco saludable';
+      return 'Peligrosa';
     },
   },
 };

@@ -2,23 +2,20 @@
 import { ref, onMounted, computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
-definePageMeta({
-  middleware: 'auth'  // Aquí aplicas el middleware
-});
+
 export default {
   setup() {
+    const config = useRuntimeConfig();
     const localities = ref([]);
     const airQualityData = ref([]); // Datos para la gráfica de AQI
     const humidityData = ref([]); // Datos para la gráfica de Humedad
     const temperatureData = ref([]); // Datos para la gráfica de Temperatura
     const labels = ref([]); // Nombres de las localidades
-    const showCharts = ref(false); // Controla la visibilidad de las gráficas
-    const loadingMessage = ref(true); // Controla la visibilidad del mensaje de carga
 
     async function fetchAirQualityData() {
       try {
-        //const response = await fetch('http://localhost:8080/api/sensor-data');
-        const response = await fetch('https://api.breathesafe.site/api/sensor-data');
+        const url = config.public.apiUrl + "/sensor-data";
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Error en la respuesta de la red: ${response.status}`);
         }
@@ -124,11 +121,6 @@ export default {
 
     onMounted(() => {
       fetchAirQualityData();
-      // Ocultar las gráficas y mostrar el mensaje de carga
-      setTimeout(() => {
-        loadingMessage.value = false; // Ocultar mensaje de carga
-        showCharts.value = true; // Mostrar gráficas
-      }, 22000); // 20 segundos
     });
 
     return {
@@ -137,8 +129,6 @@ export default {
       humidityData,
       temperatureData,
       labels,
-      showCharts,
-      loadingMessage,
     };
   },
 };
@@ -151,25 +141,22 @@ export default {
       <div class="px-4 md:px-40 flex flex-1 justify-center py-5">
         <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
           <div class="@container mb-4">
-            <h1 class="text-3xl font-bold text-center mb-4">Estadísticas de Calidad del Aire en Bogotá</h1>
-
-            <!-- Mensaje de Cargando Gráficas -->
-            <div v-if="loadingMessage" class="text-center text-lg font-semibold">Cargando gráficas...</div>
+            <h1 class="text-3xl font-bold mb-4">Estadísticas de Calidad del Aire en Bogotá</h1>
 
             <!-- Gráfica de Calidad del Aire -->
-            <div v-if="showCharts">
+            <div>
               <h2 class="text-xl font-bold mb-2">Calidad del Aire (AQI)</h2>
               <canvas id="aqiChart"></canvas>
             </div>
 
             <!-- Gráfica de Humedad -->
-            <div v-if="showCharts" class="mt-8">
+            <div class="mt-8">
               <h2 class="text-xl font-bold mb-2">Humedad Promedio</h2>
               <canvas id="humidityChart"></canvas>
             </div>
 
             <!-- Gráfica de Temperatura -->
-            <div v-if="showCharts" class="mt-8">
+            <div class="mt-8">
               <h2 class="text-xl font-bold mb-2">Temperatura Promedio</h2>
               <canvas id="temperatureChart"></canvas>
             </div>
