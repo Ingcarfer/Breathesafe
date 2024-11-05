@@ -3,7 +3,10 @@
   --primary-text: #cfcfcf; /* Texto principal */
   --accent-color: #3498db; /* Color de acento */
   --hover-color: #65e0c5;
+  --hover2-color: #000;
   --icon-color: #cfcfcf;
+  --user-icon: #ffffff;
+  --user-icon-hover: #65e0c5;
 }
 
 .bg-primary {
@@ -19,6 +22,15 @@
   transition: color 0.3s ease-in-out; /* Suaviza la transición del color */
 }
 
+.text-hover2 {
+  color: #374151; /* Mantiene el color original */
+  transition: color 0.3s ease-in-out; /* Suaviza la transición del color */
+}
+
+.text-hover2:hover {
+  color: var(--hover2-color); /* Aplica el color definido en la variable */
+}
+
 .text-hover:hover {
   color: var(--hover-color); /* Aplica el color definido en la variable */
 }
@@ -29,4 +41,18 @@
 .navbar-icon {
   color: var(--icon-color) !important;
   /* Color del ícono, ajusta según sea necesario */
+}
+.user-icon i {
+  color: var(--user-icon) !important;
+  /*Colorinicial*/
+  transition: color 0.3s ease-in-out;
+  -webkit-transition: color 0.3s ease;
+  -moz-transition: color 0.3s ease;
+  -ms-transition: color 0.3s ease;
+  -o-transition: color 0.3s ease;
+}
+
+.user-icon i:hover {
+  color: var(--user-icon-hover) !important;
+  /* Mismo color de los otros elementos en hover */
 }

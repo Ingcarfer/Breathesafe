@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // Lista de rutas públicas que no requieren autenticación
-  const publicRoutes = ['/', '/auth', '/auth/register', '/information/prueba'];
+  const publicRoutes = ['/', '/auth', '/auth/register'];
 
   // Si la ruta actual es pública, no aplicamos el middleware
   if (publicRoutes.includes(to.path)) {

@@ -165,6 +165,7 @@ export default {
       </div>
     </div>
   </div>
+  <div class="py-10 bg-[#f8fbfb] "></div>
 </template>
 
 <style scoped></style>
