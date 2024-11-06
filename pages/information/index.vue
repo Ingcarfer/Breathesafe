@@ -135,39 +135,38 @@ function closeDocument() {
         </thead>
         <tbody>
           <tr class="bg-white hover:bg-blue-200 transition-colors duration-200">
-            <td class="border px-4 py-2">Decreto 948 de 1995</td>
-            <td class="border px-4 py-2">Reglamento de Protección y Control de la Calidad del Aire</td>
+            <td class="border px-4 py-2">Ley 99 de 1993 </td>
+            <td class="border px-4 py-2">Sistema Nacional Ambiental, SINA, y se dictan otras disposiciones.</td>
             <td class="border px-4 py-2">
-              <button
-                @click="showDocument('https://minas.medellin.unal.edu.co/convenios/redaire/images/normatividad/DECRETO_948_DE_1995.pdf')"
+              <button @click="showDocument('https://www.minambiente.gov.co/wp-content/uploads/2021/08/ley-99-1993.pdf')"
                 class="text-blue-600 underline">Ver Documento</button>
             </td>
           </tr>
           <tr class="bg-gray-100 hover:bg-blue-200 transition-colors duration-200">
-            <td class="border px-4 py-2">Resolución 650 de 2010</td>
-            <td class="border px-4 py-2">Por la cual se establece el Sistema de Monitoreo de la Calidad del Aire</td>
+            <td class="border px-4 py-2">Decreto 948 de 1995</td>
+            <td class="border px-4 py-2">Reglamento de protección y control de la calidad del aire</td>
             <td class="border px-4 py-2">
               <button
-                @click="showDocument('https://minas.medellin.unal.edu.co/convenios/redaire/images/normatividad/resolucion_650_2010.pdf')"
+                @click="showDocument('https://corporinoquia.gov.co/images/docsPdf/Decreto_948-95_Calidad_del_Aire.pdf')"
                 class="text-blue-600 underline">Ver Documento</button>
             </td>
           </tr>
           <tr class="bg-gray-200 hover:bg-blue-200 transition-colors duration-200">
-            <td class="border px-4 py-2">Resolución 611 de 2015</td>
-            <td class="border px-4 py-2">Por la cual se establece el protocolo de seguimiento y monitoreo de la calidad
-              del aire</td>
+            <td class="border px-4 py-2">Resolución 610 de 2010</td>
+            <td class="border px-4 py-2">Niveles de calidad del aire o valores límites permisibles de concentración de
+              contaminantes</td>
             <td class="border px-4 py-2">
               <button
-                @click="showDocument('https://minas.medellin.unal.edu.co/convenios/redaire/images/normatividad/res_0611_15102015.pdf')"
+                @click="showDocument('https://www.minambiente.gov.co/wp-content/uploads/2021/08/resolucion-610-de-2010.pdf')"
                 class="text-blue-600 underline">Ver Documento</button>
             </td>
           </tr>
           <tr class="bg-gray-100 hover:bg-blue-200 transition-colors duration-200">
-            <td class="border px-4 py-2">Decreto 1076 de 2015</td>
-            <td class="border px-4 py-2">Por el cual se expide el Código de Recursos Naturales</td>
+            <td class="border px-4 py-2">Decreto 1076 de 2015 </td>
+            <td class="border px-4 py-2">Decreto Único Reglamentario del Sector Ambiente y Desarrollo Sostenible.</td>
             <td class="border px-4 py-2">
               <button
-                @click="showDocument('https://minas.medellin.unal.edu.co/convenios/redaire/images/normatividad/decreto_1076_2015.pdf')"
+                @click="showDocument('https://www.minambiente.gov.co/wp-content/uploads/2021/06/Decreto-1076-de-2015.pdf')"
                 class="text-blue-600 underline">Ver Documento</button>
             </td>
           </tr>
