@@ -10,15 +10,11 @@
       <slot></slot>
     </main>
   </div>
+
 </template>
 
 <script>
 import NavbarIndex from '~/components/Navbar/NavbarIndex.vue';
 
-export default {
-  components: {
-    // Registro del componente NavbarIndex para su uso en este componente
-    NavbarIndex,
-  }
-};
+
 </script>

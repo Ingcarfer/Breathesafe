@@ -1,4 +1,10 @@
 <script>
+definePageMeta({
+  middleware: 'auth'  // Aquí aplicas el middleware
+});
+useHead({
+  title: 'Estadisticas'
+});
 import { ref, onMounted, computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
