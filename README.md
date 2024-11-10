@@ -73,3 +73,36 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+# ----------------------------------------------------------------------------------
+
+## Front-end
+
+### comando para inicializar
+
+npx nuxi init .
+
+### comando para instalar dependencia
+
+npm install
+
+### comando para iniciar server
+
+npm run dev
+
+### Instalar Tailwind CSS y sus dependencias
+
+npm install -D tailwindcss postcss autoprefixer
+
+### Crear archivos de configuración Tailwind
+
+npx tailwindcss init -p
+
+### para graficos
+
+npm install chart.js vue-chartjs
+
+### pinia
+
+npm install pinia --legacy-peer-deps
+npm install @pinia/nuxt
