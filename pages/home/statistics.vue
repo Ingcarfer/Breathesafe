@@ -1,57 +1,55 @@
 <script>
 definePageMeta({
-  middleware: 'auth'  // Aquí aplicas el middleware
+  middleware: 'auth', // Aplica el middleware de autenticación
 });
-useHead({
-  title: 'Estadisticas'
-});
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { Chart, registerables } from 'chart.js';
+import { useAirQualityStore } from '@/stores/airQuality';
+
 Chart.register(...registerables);
 
 export default {
   setup() {
-    const config = useRuntimeConfig();
-    const localities = ref([]);
-    const airQualityData = ref([]); // Datos para la gráfica de AQI
-    const humidityData = ref([]); // Datos para la gráfica de Humedad
-    const temperatureData = ref([]); // Datos para la gráfica de Temperatura
-    const labels = ref([]); // Nombres de las localidades
+    const airQualityStore = useAirQualityStore();
+    const airQualityChart = ref(null);
+    const humidityChart = ref(null);
+    const temperatureChart = ref(null);
 
-    async function fetchAirQualityData() {
-      try {
-        const url = config.public.apiUrl + "/sensor-data";
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error en la respuesta de la red: ${response.status}`);
+    // Datos para las gráficas
+    const labels = ref([]);
+    const airQualityData = ref([]);
+    const humidityData = ref([]);
+    const temperatureData = ref([]);
+
+    // Computed para verificar si todavía se están cargando los datos
+    const isLoading = computed(() => airQualityStore.localities.length === 0);
+
+    onMounted(() => {
+      airQualityStore.startAutoUpdate();
+      updateChartData();
+      initializeCharts();
+
+      // Observa cambios en `airQualityStore.localities` para actualizar gráficas
+      watch(
+        () => airQualityStore.localities,
+        () => {
+          updateChartData();
+          updateCharts();
         }
+      );
+    });
 
-        const data = await response.json();
-        localities.value = data.map(item => ({
-          name: item.locality_name,
-          aqi: item.average_aqi,
-          humidity: item.average_humidity,
-          temperature: item.average_temperature,
-        }));
-
-        // Actualizar los datos para las gráficas
-        airQualityData.value = localities.value.map(item => item.aqi);
-        humidityData.value = localities.value.map(item => item.humidity);
-        temperatureData.value = localities.value.map(item => item.temperature);
-        labels.value = localities.value.map(item => item.name);
-
-        // Inicializar las gráficas
-        initializeCharts();
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
-      }
+    function updateChartData() {
+      const localities = airQualityStore.localities;
+      labels.value = localities.map(item => item.name);
+      airQualityData.value = localities.map(item => item.aqi);
+      humidityData.value = localities.map(item => parseFloat(item.humidity));
+      temperatureData.value = localities.map(item => parseFloat(item.temperature));
     }
 
-    // Función para inicializar las gráficas
     function initializeCharts() {
-      // Gráfica de Calidad del Aire
       const ctxAQI = document.getElementById('aqiChart').getContext('2d');
-      new Chart(ctxAQI, {
+      airQualityChart.value = new Chart(ctxAQI, {
         type: 'bar',
         data: {
           labels: labels.value,
@@ -66,6 +64,7 @@ export default {
           ],
         },
         options: {
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
@@ -74,9 +73,8 @@ export default {
         },
       });
 
-      // Gráfica de Humedad
       const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
-      new Chart(ctxHumidity, {
+      humidityChart.value = new Chart(ctxHumidity, {
         type: 'line',
         data: {
           labels: labels.value,
@@ -91,6 +89,7 @@ export default {
           ],
         },
         options: {
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
@@ -99,9 +98,8 @@ export default {
         },
       });
 
-      // Gráfica de Temperatura
       const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
-      new Chart(ctxTemperature, {
+      temperatureChart.value = new Chart(ctxTemperature, {
         type: 'line',
         data: {
           labels: labels.value,
@@ -116,6 +114,7 @@ export default {
           ],
         },
         options: {
+          responsive: true,
           scales: {
             y: {
               beginAtZero: true,
@@ -125,23 +124,42 @@ export default {
       });
     }
 
-    onMounted(() => {
-      fetchAirQualityData();
-    });
+    function updateCharts() {
+      // Verificar si el gráfico existe antes de intentar actualizarlo
+      if (airQualityChart.value) {
+        airQualityChart.value.data.labels = labels.value;
+        airQualityChart.value.data.datasets[0].data = airQualityData.value;
+        airQualityChart.value.update();
+      }
+
+      if (humidityChart.value) {
+        humidityChart.value.data.labels = labels.value;
+        humidityChart.value.data.datasets[0].data = humidityData.value;
+        humidityChart.value.update();
+      }
+
+      if (temperatureChart.value) {
+        temperatureChart.value.data.labels = labels.value;
+        temperatureChart.value.data.datasets[0].data = temperatureData.value;
+        temperatureChart.value.update();
+      }
+    }
 
     return {
-      localities,
-      airQualityData,
-      humidityData,
-      temperatureData,
-      labels,
+      isLoading,
     };
   },
 };
 </script>
 
 <template>
-  <div class="relative flex size-full min-h-screen flex-col bg-[#f8fbfb] group/design-root overflow-x-hidden"
+  <!-- Mostrar mensaje de cargando datos solo si no hay datos disponibles -->
+  <div v-if="isLoading" class="loading-container">
+    <div class="loader"></div>
+    <span class="loading-text">Cargando datos, por favor espere...</span>
+  </div>
+
+  <div v-else class="relative flex size-full min-h-screen flex-col bg-[#f8fbfb] group/design-root overflow-x-hidden"
     style="font-family: Manrope, 'Noto Sans', sans-serif">
     <div class="layout-container flex h-full grow flex-col">
       <div class="px-4 md:px-40 flex flex-1 justify-center py-5">
@@ -149,19 +167,16 @@ export default {
           <div class="@container mb-4">
             <h1 class="text-3xl font-bold mb-4">Estadísticas de Calidad del Aire en Bogotá</h1>
 
-            <!-- Gráfica de Calidad del Aire -->
             <div>
               <h2 class="text-xl font-bold mb-2">Calidad del Aire (AQI)</h2>
               <canvas id="aqiChart"></canvas>
             </div>
 
-            <!-- Gráfica de Humedad -->
             <div class="mt-8">
               <h2 class="text-xl font-bold mb-2">Humedad Promedio</h2>
               <canvas id="humidityChart"></canvas>
             </div>
 
-            <!-- Gráfica de Temperatura -->
             <div class="mt-8">
               <h2 class="text-xl font-bold mb-2">Temperatura Promedio</h2>
               <canvas id="temperatureChart"></canvas>
@@ -171,7 +186,54 @@ export default {
       </div>
     </div>
   </div>
-  <div class="py-10 bg-[#f8fbfb] "></div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 25vh;
+  color: #4B5563;
+  font-family: 'Arial', sans-serif;
+}
+
+.loader {
+  border: 8px solid #f3f4f6;
+  border-top: 8px solid #1a202c;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 15px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a202c;
+  text-align: center;
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+</style>

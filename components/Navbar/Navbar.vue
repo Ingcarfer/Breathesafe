@@ -98,7 +98,7 @@ onMounted(() => {
           <p class="text-gray-700 mb-2">Hola, {{ username }}</p>
 
           <!-- Apartado para Generar Reportes con ícono -->
-          <NuxtLink to="/reports" class="flex items-center  mb-2  text-gray-700 text-hover2">
+          <NuxtLink to="#" class="flex items-center  mb-2  text-gray-700 text-hover2">
             <i class="bi bi-file-earmark-text mr-2 "></i>
             Generar Reportes
           </NuxtLink>

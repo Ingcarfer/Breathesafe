@@ -1,3 +1,58 @@
+<script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import Button from '../Button/Button.vue';
+import LoginForm from '../Form/LoginForm.vue';
+import RegisterForm from '../Form/RegisterForm.vue';
+import '@/public/assets/css/navbar.css'; // Importación de estilos para la barra de navegación
+
+export default {
+  components: { Button, LoginForm, RegisterForm }, // Declaración de componentes utilizados
+
+  setup() {
+    const router = useRouter(); // Obtención del enrutador para la navegación
+    const open = ref(false); // Estado que controla la visibilidad del menú
+    const showForm = ref('login'); // Valor inicial del formulario que se mostrará
+    const Links = [
+      { name: "Inicio", link: "/" }, // Enlace de inicio
+    ];
+
+    // Función para alternar la visibilidad del menú y restablecer el formulario
+    const toggleMenu = () => {
+      if (open.value) {
+        open.value = false;
+      } else {
+        // Si el menú está cerrado, redirigimos a la página principal ("/") en pantallas pequeñas
+        router.push('/');
+        open.value = true;
+      }
+
+      if (!open.value) {
+        showForm.value = 'login'; // Restablecer al formulario de inicio de sesión
+      }
+    };
+
+    // Funciones para la navegación a las páginas de autenticación y registro
+    const goToAuthPage = () => {
+      router.push('/auth');
+    };
+    const goToRegisterPage = () => {
+      router.push('/auth/register');
+    };
+
+    // Funciones para alternar entre formularios de inicio de sesión y registro
+    const showLoginForm = () => {
+      showForm.value = 'login';
+    };
+    const showRegisterForm = () => {
+      showForm.value = 'register';
+    };
+
+    return { Links, open, toggleMenu, goToAuthPage, goToRegisterPage, showLoginForm, showRegisterForm, showForm }; // Retorno de variables y funciones al contexto
+  }
+};
+</script>
+
 <template>
   <div :class="[
     'bg-primary text-primary py-3.5 px-6 shadow fixed top-0 left-0 right-0 z-10 md:flex justify-between items-center',
@@ -50,52 +105,6 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import Button from '../Button/Button.vue';
-import LoginForm from '../Form/LoginForm.vue';
-import RegisterForm from '../Form/RegisterForm.vue';
-import '@/public/assets/css/navbar.css'; // Importación de estilos para la barra de navegación
 
-export default {
-  components: { Button, LoginForm, RegisterForm }, // Declaración de componentes utilizados
-
-  setup() {
-    const router = useRouter(); // Obtención del enrutador para la navegación
-    const open = ref(false); // Estado que controla la visibilidad del menú
-    const showForm = ref('login'); // Valor inicial del formulario que se mostrará
-    const Links = [
-      { name: "Inicio", link: "/" }, // Enlace de inicio
-    ];
-
-    // Función para alternar la visibilidad del menú y restablecer el formulario
-    const toggleMenu = () => {
-      open.value = !open.value;
-      if (!open.value) {
-        showForm.value = 'login'; // Restablecer al formulario de inicio de sesión
-      }
-    };
-
-    // Funciones para la navegación a las páginas de autenticación y registro
-    const goToAuthPage = () => {
-      router.push('/auth');
-    };
-    const goToRegisterPage = () => {
-      router.push('/auth/register');
-    };
-
-    // Funciones para alternar entre formularios de inicio de sesión y registro
-    const showLoginForm = () => {
-      showForm.value = 'login';
-    };
-    const showRegisterForm = () => {
-      showForm.value = 'register';
-    };
-
-    return { Links, open, toggleMenu, goToAuthPage, goToRegisterPage, showLoginForm, showRegisterForm, showForm }; // Retorno de variables y funciones al contexto
-  }
-};
-</script>
 
 <style scoped></style>

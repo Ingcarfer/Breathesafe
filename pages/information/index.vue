@@ -89,7 +89,7 @@ function closeDocument() {
           </tr>
           <tr class="bg-red-500 text-white">
             <td class="border px-4 py-2">151 - 200</td>
-            <td class="border px-4 py-2">Insalubre</td>
+            <td class="boIniciorder px-4 py-2">Insalubre</td>
             <td class="border px-4 py-2">Toda la población puede comenzar a experimentar efectos en su salud; los grupos
               sensibles pueden sufrir efectos más graves.</td>
             <td class="border px-4 py-2">Niños y adultos activos, y personas con enfermedades respiratorias como asma,

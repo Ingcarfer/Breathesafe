@@ -1,4 +1,6 @@
 <script setup>
+
+
 // Definir el layout para esta página
 definePageMeta({
   layout: 'lindex',

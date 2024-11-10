@@ -78,6 +78,7 @@
 </template>
 
 <script setup>
+
 // Cambia "export default" por una constante
 import Button from "../Button/Button.vue";
 import "@/public/assets/css/form.css";

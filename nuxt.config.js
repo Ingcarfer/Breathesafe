@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   // Configuración del servidor
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+  
   runtimeConfig: {
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL ?? 'http://localhost:8080/api' ,// Cambia la URL según tu configuración

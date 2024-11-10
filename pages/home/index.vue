@@ -1,9 +1,10 @@
 <script>
 definePageMeta({
-  middleware: 'auth'  // Aquí aplicas el middleware
+  middleware: 'auth', // Aplica el middleware de autenticación
 });
 
-import { ref, onMounted, computed } from 'vue';
+import { computed, onMounted } from 'vue';
+import { useAirQualityStore } from '~/stores/airQuality';
 import LocationGrid from '@/components/Location/LocationGrid.vue';
 
 export default {
@@ -11,52 +12,16 @@ export default {
     LocationGrid,
   },
   setup() {
-    const config = useRuntimeConfig();
-    const localities = ref([]); // Lista para almacenar las localidades
+    // Usamos la Store para acceder y manejar los datos de calidad del aire
+    const airQualityStore = useAirQualityStore();
 
-    // Función para obtener la calidad del aire desde la nueva API
-    async function fetchAirQualityData() {
-      try {
-        const url = config.public.apiUrl + "/sensor-data";
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Error en la respuesta de la red: ${response.status}`);
-        }
+    // Computados para las localidades y la calidad del aire global
+    const localities = computed(() => airQualityStore.localities);
+    const overallAirQuality = computed(() => airQualityStore.overallAirQuality);
 
-        const data = await response.json(); // Datos JSON de la API
-        localities.value = data.map(item => ({
-          name: item.locality_name,
-          aqi: item.average_aqi,
-          humidity: `${item.average_humidity}%`,
-          temperature: `${item.average_temperature}°C`,
-        }));
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
-      }
-    }
-
-    // Calcular el promedio de calidad del aire para todas las localidades
-    const overallAirQuality = computed(() => {
-      const validLocalities = localities.value.filter(locality => !isNaN(locality.aqi));
-      if (validLocalities.length === 0) return 'Sin datos';
-
-      const totalAQI = validLocalities.reduce((sum, locality) => sum + locality.aqi, 0);
-      const averageAQI = totalAQI / validLocalities.length;
-
-      return getAirQualityDescription(averageAQI);
-    });
-
-    // Descripción de la calidad del aire según el AQI
-    function getAirQualityDescription(aqi) {
-      if (aqi <= 50) return 'Buena';
-      if (aqi <= 100) return 'Moderada';
-      if (aqi <= 150) return 'Dañina para grupos sensibles';
-      if (aqi <= 200) return 'Muy poco saludable';
-      return 'Peligrosa';
-    }
-
+    // Iniciamos la actualización automática de datos al montar el componente
     onMounted(() => {
-      fetchAirQualityData(); // Obtener los datos al montar el componente
+      airQualityStore.startAutoUpdate();
     });
 
     return {
@@ -66,12 +31,15 @@ export default {
   },
 };
 </script>
+
 <template>
   <div class="relative flex size-full min-h-screen flex-col bg-[#f8fbfb] group/design-root overflow-x-hidden"
     style="font-family: Manrope, 'Noto Sans', sans-serif">
+
     <div class="layout-container flex h-full grow flex-col">
       <div class="px-4 md:px-40 flex flex-1 justify-center py-5">
         <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+
           <div class="@container mb-4">
             <div class="@[480px]:p-4">
               <div
@@ -94,19 +62,25 @@ export default {
 
                 <label class="flex flex-col min-w-40 h-14 w-full max-w-[480px] @[480px]:h-16">
                   <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                    <!-- Aquí puedes agregar más controles si los necesitas -->
                   </div>
                 </label>
               </div>
             </div>
           </div>
+
+          <!-- Componente para mostrar las localidades y sus datos de calidad del aire -->
           <LocationGrid :localities="localities" />
+
         </div>
       </div>
     </div>
   </div>
-  <div class="py-10 bg-[#f8fbfb] "></div>
+
+  <!-- Espaciado adicional -->
+  <div class="py-10 bg-[#f8fbfb]"></div>
 </template>
 
-
-
-<style scoped></style>
+<style scoped>
+/* Puedes agregar estilos específicos aquí si lo necesitas */
+</style>
