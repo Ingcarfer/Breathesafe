@@ -43,10 +43,12 @@ export default {
     aqiColorClass() {
       const aqi = this.locality.aqi;
       if (aqi === null) return 'text-gray-500';
-      if (aqi <= 50) return 'text-green-500';
-      if (aqi <= 100) return 'text-yellow-500';
-      if (aqi <= 150) return 'text-orange-500';
-      return 'text-red-500';
+      if (aqi <= 50) return 'text-green-500';     // Buena calidad
+      if (aqi <= 100) return 'text-yellow-500';   // Moderada
+      if (aqi <= 150) return 'text-orange-500';   // No saludable para grupos sensibles
+      if (aqi <= 200) return 'text-red-500';      // No saludable
+      if (aqi <= 300) return 'text-purple-500';   // Muy no saludable
+      return 'text-brown-500';                    // Peligroso
     },
   },
   methods: {

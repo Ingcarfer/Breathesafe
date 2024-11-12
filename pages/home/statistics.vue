@@ -1,188 +1,143 @@
-<script>
+<script setup>
 definePageMeta({
   middleware: 'auth', // Aplica el middleware de autenticación
 });
-import { ref, onMounted, watch, computed } from 'vue';
-import { Chart, registerables } from 'chart.js';
+import { onMounted, nextTick, ref } from 'vue';
 import { useAirQualityStore } from '@/stores/airQuality';
+import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
 
-export default {
-  setup() {
-    const airQualityStore = useAirQualityStore();
-    const airQualityChart = ref(null);
-    const humidityChart = ref(null);
-    const temperatureChart = ref(null);
+const airQualityStore = useAirQualityStore();
+const labels = ref([]);
+const airQualityData = ref([]);
+const humidityData = ref([]);
+const temperatureData = ref([]);
+const aqiColors = ref([]); // Array para los colores dinámicos
 
-    // Datos para las gráficas
-    const labels = ref([]);
-    const airQualityData = ref([]);
-    const humidityData = ref([]);
-    const temperatureData = ref([]);
+let airQualityChart = null;
+let humidityChart = null;
+let temperatureChart = null;
 
-    // Computed para verificar si todavía se están cargando los datos
-    const isLoading = computed(() => airQualityStore.localities.length === 0);
+onMounted(async () => {
+  await airQualityStore.fetchAirQualityData();
+  nextTick(() => {
+    updateChartData();
+    initializeCharts();
+  });
+});
 
-    onMounted(() => {
-      airQualityStore.startAutoUpdate();
-      updateChartData();
-      initializeCharts();
+function getAQIColor(aqi) {
+  if (aqi <= 50) return 'rgba(0, 255, 0, 0.6)'; // Verde para "buena" calidad de aire
+  if (aqi <= 100) return 'rgba(255, 255, 0, 0.6)'; // Amarillo para "moderada"
+  if (aqi <= 150) return 'rgba(255, 165, 0, 0.6)'; // Naranja para "no saludable para grupos sensibles"
+  if (aqi <= 200) return 'rgba(255, 0, 0, 0.6)'; // Rojo para "no saludable"
+  if (aqi <= 300) return 'rgba(153, 50, 204, 0.6)'; // Púrpura para "muy no saludable"
+  return 'rgba(128, 0, 0, 0.6)'; // Marrón para "peligroso"
+}
 
-      // Observa cambios en `airQualityStore.localities` para actualizar gráficas
-      watch(
-        () => airQualityStore.localities,
-        () => {
-          updateChartData();
-          updateCharts();
-        }
-      );
+function updateChartData() {
+  const localities = airQualityStore.localities;
+  labels.value = localities.map(item => item.name);
+  airQualityData.value = localities.map(item => item.aqi);
+  humidityData.value = localities.map(item => parseFloat(item.humidity.replace('%', '')));
+  temperatureData.value = localities.map(item => parseFloat(item.temperature.replace('°C', '')));
+  aqiColors.value = airQualityData.value.map(aqi => getAQIColor(aqi)); // Genera colores basados en el AQI
+}
+
+function initializeCharts() {
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: { y: { beginAtZero: true } },
+  };
+
+  if (!airQualityChart) {
+    const ctxAQI = document.getElementById('aqiChart').getContext('2d');
+    airQualityChart = new Chart(ctxAQI, {
+      type: 'bar',
+      data: {
+        labels: labels.value,
+        datasets: [
+          {
+            label: 'Calidad del Aire (AQI)',
+            data: airQualityData.value,
+            backgroundColor: aqiColors.value, // Aplica los colores dinámicos
+            borderColor: 'rgba(0, 0, 0, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: { ...chartOptions, scales: { y: { beginAtZero: true, suggestedMax: 500 } } },
     });
+  }
 
-    function updateChartData() {
-      const localities = airQualityStore.localities;
-      labels.value = localities.map(item => item.name);
-      airQualityData.value = localities.map(item => item.aqi);
-      humidityData.value = localities.map(item => parseFloat(item.humidity));
-      temperatureData.value = localities.map(item => parseFloat(item.temperature));
-    }
-
-    function initializeCharts() {
-      const ctxAQI = document.getElementById('aqiChart').getContext('2d');
-      airQualityChart.value = new Chart(ctxAQI, {
-        type: 'bar',
-        data: {
-          labels: labels.value,
-          datasets: [
-            {
-              label: 'Calidad del Aire (AQI)',
-              data: airQualityData.value,
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
+  if (!humidityChart) {
+    const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
+    humidityChart = new Chart(ctxHumidity, {
+      type: 'line',
+      data: {
+        labels: labels.value,
+        datasets: [
+          {
+            label: 'Humedad (%)',
+            data: humidityData.value,
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1,
           },
-        },
-      });
+        ],
+      },
+      options: { ...chartOptions, scales: { y: { beginAtZero: true, max: 100 } } },
+    });
+  }
 
-      const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
-      humidityChart.value = new Chart(ctxHumidity, {
-        type: 'line',
-        data: {
-          labels: labels.value,
-          datasets: [
-            {
-              label: 'Humedad (%)',
-              data: humidityData.value,
-              backgroundColor: 'rgba(153, 102, 255, 0.2)',
-              borderColor: 'rgba(153, 102, 255, 1)',
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
+  if (!temperatureChart) {
+    const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
+    temperatureChart = new Chart(ctxTemperature, {
+      type: 'line',
+      data: {
+        labels: labels.value,
+        datasets: [
+          {
+            label: 'Temperatura (°C)',
+            data: temperatureData.value,
+            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            borderColor: 'rgba(255, 159, 64, 1)',
+            borderWidth: 1,
           },
-        },
-      });
+        ],
+      },
+      options: chartOptions,
+    });
+  }
 
-      const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
-      temperatureChart.value = new Chart(ctxTemperature, {
-        type: 'line',
-        data: {
-          labels: labels.value,
-          datasets: [
-            {
-              label: 'Temperatura (°C)',
-              data: temperatureData.value,
-              backgroundColor: 'rgba(255, 159, 64, 0.2)',
-              borderColor: 'rgba(255, 159, 64, 1)',
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    }
-
-    function updateCharts() {
-      // Verificar si el gráfico existe antes de intentar actualizarlo
-      if (airQualityChart.value) {
-        airQualityChart.value.data.labels = labels.value;
-        airQualityChart.value.data.datasets[0].data = airQualityData.value;
-        airQualityChart.value.update();
-      }
-
-      if (humidityChart.value) {
-        humidityChart.value.data.labels = labels.value;
-        humidityChart.value.data.datasets[0].data = humidityData.value;
-        humidityChart.value.update();
-      }
-
-      if (temperatureChart.value) {
-        temperatureChart.value.data.labels = labels.value;
-        temperatureChart.value.data.datasets[0].data = temperatureData.value;
-        temperatureChart.value.update();
-      }
-    }
-
-    return {
-      isLoading,
-    };
-  },
-};
+  [airQualityChart, humidityChart, temperatureChart].forEach(chart => {
+    if (chart) chart.update();
+  });
+}
 </script>
 
+
 <template>
-  <!-- Mostrar mensaje de cargando datos solo si no hay datos disponibles -->
-  <div v-if="isLoading" class="loading-container">
-    <div class="loader"></div>
-    <span class="loading-text">Cargando datos, por favor espere...</span>
-  </div>
+  <div class="relative flex flex-col min-h-screen w-full bg-[#f8fbfb] overflow-x-hidden px-4 sm:px-6 lg:px-8 py-5">
+    <h1 class="text-center text-2xl font-bold">Estadísticas de Calidad del Aire</h1>
 
-  <div v-else class="relative flex size-full min-h-screen flex-col bg-[#f8fbfb] group/design-root overflow-x-hidden"
-    style="font-family: Manrope, 'Noto Sans', sans-serif">
-    <div class="layout-container flex h-full grow flex-col">
-      <div class="px-4 md:px-40 flex flex-1 justify-center py-5">
-        <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-          <div class="@container mb-4">
-            <h1 class="text-3xl font-bold mb-4">Estadísticas de Calidad del Aire en Bogotá</h1>
+    <!-- Mostrar mensaje de cargando datos solo si no hay datos disponibles -->
+    <div v-if="airQualityStore.localities.length === 0" class="loading-container">
+      <div class="loader"></div>
+      <span class="loading-text">Cargando datos, por favor espere...</span>
+    </div>
 
-            <div>
-              <h2 class="text-xl font-bold mb-2">Calidad del Aire (AQI)</h2>
-              <canvas id="aqiChart"></canvas>
-            </div>
-
-            <div class="mt-8">
-              <h2 class="text-xl font-bold mb-2">Humedad Promedio</h2>
-              <canvas id="humidityChart"></canvas>
-            </div>
-
-            <div class="mt-8">
-              <h2 class="text-xl font-bold mb-2">Temperatura Promedio</h2>
-              <canvas id="temperatureChart"></canvas>
-            </div>
-          </div>
-        </div>
+    <div v-else class="charts-container">
+      <div class="chart-wrapper">
+        <canvas id="aqiChart"></canvas>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="humidityChart"></canvas>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="temperatureChart"></canvas>
       </div>
     </div>
   </div>
@@ -234,6 +189,33 @@ export default {
 
   100% {
     opacity: 1;
+  }
+}
+
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.chart-wrapper {
+  width: 100%;
+  max-width: 700px;
+  height: 350px;
+}
+
+@media (max-width: 768px) {
+  .chart-wrapper {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    height: 300px;
+    min-width: 500px;
   }
 }
 </style>

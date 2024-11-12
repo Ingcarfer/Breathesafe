@@ -8,6 +8,11 @@ export const useAirQualityStore = defineStore('airQuality', {
 
   actions: {
     async fetchAirQualityData() {
+      if (this.localities.length > 0) {
+        // Si ya tenemos datos, no hacemos la solicitud
+        return;
+      }
+
       const config = useRuntimeConfig();
       try {
         const url = config.public.apiUrl + '/sensor-data';
