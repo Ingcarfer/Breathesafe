@@ -37,7 +37,10 @@ function getAQIColor(aqi) {
 }
 
 function updateChartData() {
-  const localities = airQualityStore.localities;
+  // Filtra las localidades cuyo AQI no sea igual a 0
+  const localities = airQualityStore.localities.filter(item => item.aqi !== 0);
+
+  // Actualiza los datos de las gráficas solo con las localidades filtradas
   labels.value = localities.map(item => item.name);
   airQualityData.value = localities.map(item => item.aqi);
   humidityData.value = localities.map(item => parseFloat(item.humidity.replace('%', '')));

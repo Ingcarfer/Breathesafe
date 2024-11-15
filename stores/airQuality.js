@@ -22,12 +22,16 @@ export const useAirQualityStore = defineStore('airQuality', {
         }
 
         const data = await response.json();
-        this.localities = data.map(item => ({
-          name: item.locality_name,
-          aqi: item.average_aqi,
-          humidity: `${item.average_humidity}%`,
-          temperature: `${item.average_temperature}°C`,
-        }));
+
+        // Filtrar datos cuyo "aqi" sea "-"
+        this.localities = data
+          .filter(item => item.average_aqi !== '-' && !isNaN(item.average_aqi)) // Filtrar valores inválidos
+          .map(item => ({
+            name: item.locality_name,
+            aqi: item.average_aqi,
+            humidity: `${item.average_humidity}%`,
+            temperature: `${item.average_temperature}°C`,
+          }));
       } catch (error) {
         console.error('Error al obtener los datos:', error);
       }
@@ -53,14 +57,5 @@ export const useAirQualityStore = defineStore('airQuality', {
       return this.getAirQualityDescription(averageAQI);
     },
 
-    getAirQualityDescription() {
-      return aqi => {
-        if (aqi <= 50) return 'Buena';
-        if (aqi <= 100) return 'Moderada';
-        if (aqi <= 150) return 'Dañina para grupos sensibles';
-        if (aqi <= 200) return 'Muy poco saludable';
-        return 'Peligrosa';
-      };
-    },
   },
 });

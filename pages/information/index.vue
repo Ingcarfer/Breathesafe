@@ -28,11 +28,26 @@ function closeDocument() {
     <h2 class="text-2xl text-center text-black font-bold mb-5">Objetivo</h2>
     <p class="text-left text-black text-lg">
       Proporcionar una plataforma que permite la consulta y análisis en tiempo real de la calidad del aire en diversas
-      localidades de Bogotá, ofreciendo herramientas comparativas, reportes automáticos con gráficos y estadísticas, y
+      localidades de Bogotá, ofreciendo reportes automáticos con gráficos y estadísticas, y
       una interfaz amigable para facilitar la visualización y el seguimiento de los niveles de contaminación en la
       ciudad.
     </p>
   </div>
+
+  <br />
+
+  <div class="container mx-auto px-4 sm:px-12">
+    <h2 class="text-2xl text-center text-black font-bold mb-5">Créditos</h2>
+    <p class="text-left text-black text-lg">
+      La información sobre la calidad del aire en Bogotá utilizada por <strong>BreatheSafe.site</strong> es
+      proporcionada por
+      la <a href="https://aqicn.org/" target="_blank" class="text-blue-600 hover:underline">API de AQICN.org</a>, que
+      recopila datos en colaboración con estaciones de monitoreo de calidad del aire locales y organizaciones
+      ambientales como la Secretaría de Ambiente de Bogotá, colegios e instituciones. Agradecemos a AQICN.org y a sus
+      colaboradores por hacer estos datos accesibles.
+    </p>
+  </div>
+
 
   <br />
 
@@ -56,7 +71,7 @@ function closeDocument() {
       <table class="table-auto w-full text-left text-black border-collapse">
         <thead>
           <tr class="bg-black text-white">
-            <th class="border px-4 py-2">ICA</th>
+            <th class="border px-4 py-2">AQI</th>
             <th class="border px-4 py-2">Nivel de contaminación del aire</th>
             <th class="border px-4 py-2">Implicaciones de salud</th>
             <th class="border px-4 py-2">Recomendaciones</th>
