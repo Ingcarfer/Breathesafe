@@ -5,9 +5,7 @@ import Button from '../Button/Button.vue';
 
 const open = ref(false);
 const userMenuOpen = ref(false);
-const isLoading = ref(false); // Variable para controlar el spinner
-const username = ref('');
-const config = useRuntimeConfig();
+const isLoading = ref(false); // Estado de carga para el reporte
 const Links = [
   { name: "Inicio", link: "/home" },
   { name: "Estadísticas", link: "/home/statistics" },
@@ -15,6 +13,8 @@ const Links = [
 ];
 
 const router = useRouter();
+const username = ref('');
+const config = useRuntimeConfig();
 
 const toggleMenu = () => {
   open.value = !open.value;
@@ -50,6 +50,7 @@ const fetchUsername = async () => {
         const data = await response.json();
         username.value = data.data.name;
         localStorage.setItem('username', data.data.name);
+        localStorage.setItem('userId', data.data.id); // Guardamos el ID del usuario
       } else {
         console.error('Error al obtener el nombre del usuario:', response.status);
       }
@@ -61,13 +62,13 @@ const fetchUsername = async () => {
 
 // Función para generar el reporte
 const generateReport = () => {
-  const userId = localStorage.getItem('userId'); // Obtener el ID del usuario desde localStorage
+  const userId = localStorage.getItem('userId'); // Obtenemos el ID desde localStorage
   if (userId) {
-    isLoading.value = true; // Activar el spinner de carga
-
     const data = {
       userId: userId // Usamos el ID para la solicitud
     };
+
+    isLoading.value = true; // Activar indicador de carga
 
     fetch('http://localhost:8080/api/generateReport', {
       method: 'POST',
@@ -84,12 +85,12 @@ const generateReport = () => {
         link.href = url;
         link.download = 'reporte_calidad_aire.pdf';  // Nombre del archivo
         link.click();  // Simula un clic para descargar el archivo
-
-        isLoading.value = false; // Desactivamos el spinner de carga
       })
       .catch(error => {
         console.error('Error al generar el reporte:', error);
-        isLoading.value = false; // Desactivamos el spinner de carga en caso de error
+      })
+      .finally(() => {
+        isLoading.value = false; // Desactivar indicador de carga
       });
   } else {
     console.error('Usuario no autenticado');
@@ -101,6 +102,7 @@ onMounted(() => {
   fetchUsername();
 });
 </script>
+
 <template>
   <div :class="[
     'bg-primary text-primary py-3.5 px-6 shadow fixed top-0 left-0 right-0 z-10 md:flex justify-between items-center',
@@ -130,24 +132,44 @@ onMounted(() => {
         <span @click="toggleUserMenu" class="cursor-pointer text-3xl user-icon">
           <i class="bi bi-person-circle"></i>
         </span>
-        <!-- Aumentar el ancho del menú desplegable -->
+        <!-- Menú desplegable -->
         <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-3 z-20">
           <p class="text-gray-700 mb-2">Hola, {{ username }}</p>
 
-          <!-- Apartado para Generar Reportes con ícono -->
-          <NuxtLink to="#" @click.prevent="generateReport" class="flex items-center mb-2 text-gray-700 text-hover2">
-            <i class="bi bi-file-earmark-text mr-2"></i>
-            Generar Reportes
-            <!-- Spinner que solo se muestra cuando isLoading es true -->
-            <span v-if="isLoading" class="ml-2">
-              <div class="w-4 h-4 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin">
-              </div>
-            </span>
-          </NuxtLink>
+          <!-- Botón para Generar Reporte -->
+          <div class="flex items-center">
+            <button @click="generateReport" class="flex items-center text-gray-700 text-hover2">
+              <i class="bi bi-file-earmark-text mr-2"></i>
+              Generar Reportes
+            </button>
+            <div v-if="isLoading" class="ml-2 spinner"></div>
+          </div>
 
-          <Button class="w-full" @click="logout">Cerrar Sesión</Button>
+          <Button class="w-full mt-2" @click="logout">Cerrar Sesión</Button>
         </div>
       </li>
     </ul>
   </div>
 </template>
+
+<style scoped>
+.spinner {
+  border: 4px solid transparent;
+  border-top: 4px solid #3498db;
+  /* Color personalizado */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
