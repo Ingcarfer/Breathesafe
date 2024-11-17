@@ -2,6 +2,9 @@
 definePageMeta({
   middleware: 'auth', // Aplica el middleware de autenticación
 });
+useHead({
+  title: "Inicio",
+});
 
 import { computed, onMounted } from 'vue';
 import { useAirQualityStore } from '~/stores/airQuality';

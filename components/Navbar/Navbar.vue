@@ -5,16 +5,16 @@ import Button from '../Button/Button.vue';
 
 const open = ref(false);
 const userMenuOpen = ref(false);
+const isLoading = ref(false); // Variable para controlar el spinner
+const username = ref('');
+const config = useRuntimeConfig();
 const Links = [
   { name: "Inicio", link: "/home" },
   { name: "Estadísticas", link: "/home/statistics" },
   { name: "Información", link: "/information" },
-
 ];
 
 const router = useRouter();
-const username = ref('');
-const config = useRuntimeConfig();
 
 const toggleMenu = () => {
   open.value = !open.value;
@@ -59,6 +59,43 @@ const fetchUsername = async () => {
   }
 };
 
+// Función para generar el reporte
+const generateReport = () => {
+  const userId = localStorage.getItem('userId'); // Obtener el ID del usuario desde localStorage
+  if (userId) {
+    isLoading.value = true; // Activar el spinner de carga
+
+    const data = {
+      userId: userId // Usamos el ID para la solicitud
+    };
+
+    fetch('http://localhost:8080/api/generateReport', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then(response => response.blob())  // Esperar una respuesta de tipo binario (PDF)
+      .then(blob => {
+        // Crear un enlace para descargar el PDF
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'reporte_calidad_aire.pdf';  // Nombre del archivo
+        link.click();  // Simula un clic para descargar el archivo
+
+        isLoading.value = false; // Desactivamos el spinner de carga
+      })
+      .catch(error => {
+        console.error('Error al generar el reporte:', error);
+        isLoading.value = false; // Desactivamos el spinner de carga en caso de error
+      });
+  } else {
+    console.error('Usuario no autenticado');
+  }
+};
+
 // Llamar a la función al montar el componente
 onMounted(() => {
   fetchUsername();
@@ -98,9 +135,14 @@ onMounted(() => {
           <p class="text-gray-700 mb-2">Hola, {{ username }}</p>
 
           <!-- Apartado para Generar Reportes con ícono -->
-          <NuxtLink to="#" class="flex items-center  mb-2  text-gray-700 text-hover2">
-            <i class="bi bi-file-earmark-text mr-2 "></i>
+          <NuxtLink to="#" @click.prevent="generateReport" class="flex items-center mb-2 text-gray-700 text-hover2">
+            <i class="bi bi-file-earmark-text mr-2"></i>
             Generar Reportes
+            <!-- Spinner que solo se muestra cuando isLoading es true -->
+            <span v-if="isLoading" class="ml-2">
+              <div class="w-4 h-4 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin">
+              </div>
+            </span>
           </NuxtLink>
 
           <Button class="w-full" @click="logout">Cerrar Sesión</Button>
@@ -109,7 +151,3 @@ onMounted(() => {
     </ul>
   </div>
 </template>
-
-
-
-<style scoped></style>

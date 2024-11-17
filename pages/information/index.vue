@@ -65,10 +65,10 @@ function closeDocument() {
 
   <br />
 
-  <div class="container mx-auto px-4 sm:px-12">
+  <div class="container mx-auto px-4 sm:px-12 ">
     <h2 class="text-2xl text-center text-black font-bold mb-5">Niveles de Calidad de Aire según ICA</h2>
     <div class="overflow-x-auto">
-      <table class="table-auto w-full text-left text-black border-collapse">
+      <table class="table-auto w-full text-left text-black border-collapse rounded-lg ">
         <thead>
           <tr class="bg-black text-white">
             <th class="border px-4 py-2">AQI</th>
@@ -137,7 +137,7 @@ function closeDocument() {
     <h2 class="text-2xl text-center text-black font-bold mb-5">Documentos legales relacionados a la calidad del aire en
       Colombia</h2>
     <div class="overflow-x-auto">
-      <table class="table-auto w-full text-left text-black border-collapse">
+      <table class="table-auto w-full text-left text-black border-collapse rounded-lg">
         <thead>
           <tr class="bg-blue-500 text-white">
             <th colspan="3" class="border px-4 py-2 text-center font-bold text-lg">LISTA DE DOCUMENTOS</th>
@@ -216,5 +216,15 @@ function closeDocument() {
     width: 95%;
     height: 90%;
   }
+}
+
+.container p {
+  text-align: justify;
+}
+
+table {
+  border-radius: 12px;
+  overflow: hidden;
+  /* Asegura que el contenido no sobresalga de las esquinas redondeadas */
 }
 </style>

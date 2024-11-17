@@ -44,18 +44,37 @@ export const useAirQualityStore = defineStore('airQuality', {
         setInterval(() => this.fetchAirQualityData(), 30000); // Actualizar cada 30 segundos
       }
     },
+
+    // Método para obtener la descripción de la calidad del aire
+    getAirQualityDescription(aqi) {
+      if (aqi === null || aqi === 0) {
+        return '';
+      }
+     else if (aqi <= 50) {
+        return 'Buena';
+      } else if (aqi <= 100) {
+        return 'Moderada';
+      } else if (aqi <= 150) {
+        return 'Dañina para grupos sensibles';
+      } else if (aqi <= 200) {
+        return 'Dañina';
+      } else if (aqi <= 300) {
+        return 'Muy dañina';
+      } else {
+        return 'Peligrosa';
+      }
+    },
   },
 
   getters: {
     overallAirQuality() {
       const validLocalities = this.localities.filter(locality => !isNaN(locality.aqi));
-      if (validLocalities.length === 0) return 'Sin datos';
+      if (validLocalities.length === 0) return 'Cargando ...';
 
       const totalAQI = validLocalities.reduce((sum, locality) => sum + locality.aqi, 0);
       const averageAQI = totalAQI / validLocalities.length;
 
       return this.getAirQualityDescription(averageAQI);
     },
-
   },
 });

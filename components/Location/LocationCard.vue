@@ -61,7 +61,8 @@ export default {
       if (aqi <= 50) return 'Buena';
       if (aqi <= 100) return 'Moderada';
       if (aqi <= 150) return 'Dañina para grupos sensibles';
-      if (aqi <= 200) return 'Muy poco saludable';
+      if (aqi <= 200) return 'dañina';
+      if (aqi <= 300) return 'Muy dañina';
       return 'Peligrosa';
     },
   },
