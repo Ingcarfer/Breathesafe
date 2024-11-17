@@ -74,7 +74,7 @@ function initializeCharts() {
           },
         ],
       },
-      options: { ...chartOptions, scales: { y: { beginAtZero: true, suggestedMax: 500 } } },
+      options: { ...chartOptions, scales: { y: { beginAtZero: true } } },
     });
   }
 
