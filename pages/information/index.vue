@@ -96,7 +96,7 @@ function closeDocument() {
           </tr>
           <tr class="bg-orange-500 text-black">
             <td class="border px-4 py-2">101 - 150</td>
-            <td class="border px-4 py-2">Insalubre para grupos sensibles</td>
+            <td class="border px-4 py-2">Dañina para grupos sensibles</td>
             <td class="border px-4 py-2">Los miembros de grupos sensibles pueden experimentar efectos en su salud. El
               público en general no se verá afectado probablemente.</td>
             <td class="border px-4 py-2">Niños y adultos activos, y personas con enfermedades respiratorias como asma,
@@ -104,7 +104,7 @@ function closeDocument() {
           </tr>
           <tr class="bg-red-500 text-white">
             <td class="border px-4 py-2">151 - 200</td>
-            <td class="boIniciorder px-4 py-2">Insalubre</td>
+            <td class="boIniciorder px-4 py-2">Dañina</td>
             <td class="border px-4 py-2">Toda la población puede comenzar a experimentar efectos en su salud; los grupos
               sensibles pueden sufrir efectos más graves.</td>
             <td class="border px-4 py-2">Niños y adultos activos, y personas con enfermedades respiratorias como asma,
@@ -113,7 +113,7 @@ function closeDocument() {
           </tr>
           <tr class="bg-purple-700 text-white">
             <td class="border px-4 py-2">201 - 300</td>
-            <td class="border px-4 py-2">Muy insalubre</td>
+            <td class="border px-4 py-2">Muy Dañina</td>
             <td class="border px-4 py-2">Advertencias de condiciones de emergencia. Es probable que toda la población se
               vea afectada.</td>
             <td class="border px-4 py-2">Niños y adultos activos, y personas con enfermedades respiratorias como asma,
@@ -122,7 +122,7 @@ function closeDocument() {
           </tr>
           <tr class="bg-amber-800 text-white">
             <td class="border px-4 py-2">300+</td>
-            <td class="border px-4 py-2">Peligroso</td>
+            <td class="border px-4 py-2">Peligrosa</td>
             <td class="border px-4 py-2">Alerta de salud: todos pueden experimentar efectos graves en la salud.</td>
             <td class="border px-4 py-2">Todo el mundo debería evitar cualquier tipo de actividad al aire libre.</td>
           </tr>

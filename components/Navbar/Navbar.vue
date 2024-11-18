@@ -138,7 +138,7 @@ onMounted(() => {
 
           <!-- Botón para Generar Reporte -->
           <div class="flex items-center">
-            <button @click="generateReport" class="flex items-center text-gray-700 text-hover2">
+            <button @click="generateReport" class="flex items text-gray-700 text-hover2">
               <i class="bi bi-file-earmark-text mr-2"></i>
               Generar Reportes
             </button>
