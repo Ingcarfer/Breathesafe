@@ -1,5 +1,6 @@
 <script>
 import { useAirQualityStore } from "~/stores/airQuality";
+import { useRuntimeConfig } from '#app';
 
 export default {
   data() {
@@ -83,8 +84,11 @@ export default {
   },
   methods: {
     async getAirQuality(lat, lng) {
+      const config = useRuntimeConfig();
       try {
-        const response = await fetch(`http://localhost:8080/nearest-sensor-data/${lat}/${lng}`);
+        const url = `${config.public.apiUrl}/nearest-sensor-data/${lat}/${lng}`;
+        const response = await fetch(url);
+
         const data = await response.json();
 
         if (data && data.aqi !== undefined && data.humidity !== undefined) {
@@ -102,6 +106,7 @@ export default {
         this.airQuality = null;
         console.error(error);
       }
+
     },
 
     getAirQualityDescription(aqi) {
