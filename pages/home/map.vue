@@ -30,9 +30,10 @@ export default {
     );
 
     // Cargar el script de Google Maps dinámicamente
+    const config = useRuntimeConfig();
     const script = document.createElement("script");
-    script.src =
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyAxoOWt3DgetxM1RgC5W30eBj8sHw-g_ak&libraries=places";
+
+    script.src = config.public.mapUrl;
     script.async = true;
     script.defer = true;
 
