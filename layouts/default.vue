@@ -5,7 +5,7 @@ import Footer from '~/components/Footer/Footer.vue';
 
 <template>
   <!-- Contenedor principal con flex y min-h-screen para ubicar el footer al final -->
-  <div class="bg-main min-h-screen flex flex-col">
+  <div class="bg-[#f8fbfb] min-h-screen flex flex-col">
 
     <!-- Navbar fijo en la parte superior -->
     <Navbar class="z-10" />
