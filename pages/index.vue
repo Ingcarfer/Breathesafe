@@ -10,6 +10,7 @@ definePageMeta({
 useHead({
   title: 'BreatheSafe - Inicio'
 });
+
 </script>
 <template>
   <div class="px-10 flex flex-1 justify-center py-5">
@@ -105,6 +106,8 @@ useHead({
       </div>
     </div>
   </div>
+
+
 
 </template>
 

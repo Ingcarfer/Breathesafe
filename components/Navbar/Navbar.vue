@@ -9,6 +9,7 @@ const isLoading = ref(false); // Estado de carga para el reporte
 const Links = [
   { name: "Inicio", link: "/home" },
   { name: "Estadísticas", link: "/home/statistics" },
+  { name: "Mapa", link: "/home/map" },
   { name: "Información", link: "/information" },
 ];
 
@@ -69,8 +70,8 @@ const generateReport = () => {
     };
 
     isLoading.value = true; // Activar indicador de carga
-
-    fetch('http://localhost:8080/api/generateReport', {
+    const url = config.public.apiUrl + "/generateReport";
+    fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
