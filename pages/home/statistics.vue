@@ -127,7 +127,7 @@ function initializeCharts() {
 
 <template>
   <div class="relative flex flex-col min-h-screen w-full bg-[#f8fbfb] overflow-x-hidden px-4 sm:px-6 lg:px-8 py-5">
-    <h1 class="text-center text-2xl font-bold">Estadísticas de Calidad del Aire</h1>
+    <h1 class="text-center text-2xl font-bold">Estadísticas de la calidad del aire en Bogotá</h1>
 
     <!-- Mostrar mensaje de cargando datos solo si no hay datos disponibles -->
     <div v-if="airQualityStore.localities.length === 0" class="loading-container">
@@ -204,17 +204,28 @@ function initializeCharts() {
   gap: 20px;
   align-items: center;
   overflow-x: auto;
+  padding: 0 10px;
+  /* Agregar un pequeño relleno general */
 }
 
 .chart-wrapper {
   width: 100%;
   max-width: 700px;
   height: 350px;
+  padding: 0 15px;
+  /* Agrega espacio interno para que no se recorte */
+  box-sizing: border-box;
+  /* Asegura que el padding no afecte el tamaño total */
+  margin-left: auto;
+  /* Desplaza hacia la derecha */
+  margin-right: auto;
+  /* Asegura que quede centrado */
 }
 
 @media (max-width: 768px) {
   .chart-wrapper {
     min-width: 600px;
+    /* Mantener ancho mínimo adecuado */
   }
 }
 
@@ -222,6 +233,9 @@ function initializeCharts() {
   .chart-wrapper {
     height: 300px;
     min-width: 500px;
+    /* Para pantallas muy pequeñas */
+    padding: 0 20px;
+    /* Ajusta el relleno para evitar recortes */
   }
 }
 </style>

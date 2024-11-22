@@ -19,6 +19,9 @@ const config = useRuntimeConfig();
 
 const toggleMenu = () => {
   open.value = !open.value;
+  if (!open.value) {
+    userMenuOpen.value = false; // Cierra el menú de usuario si el principal se cierra
+  }
 };
 
 const toggleUserMenu = () => {
@@ -35,31 +38,37 @@ const logout = () => {
 
 // Función para obtener el nombre del usuario
 const fetchUsername = async () => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    try {
-      const url = config.public.apiUrl + "/users/me";
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+  if (process.client) {
+    const token = localStorage.getItem('token');
+    console.log('Token recibido:', token);
+    if (token) {
+      try {
+        const url = config.public.apiUrl + "/users/me";
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        username.value = data.data.name;
-        localStorage.setItem('username', data.data.name);
-        localStorage.setItem('userId', data.data.id); // Guardamos el ID del usuario
-      } else {
-        console.error('Error al obtener el nombre del usuario:', response.status);
+        if (response.ok) {
+          const data = await response.json();
+          username.value = data.data.name;
+          localStorage.setItem('username', data.data.name);
+          localStorage.setItem('userId', data.data.id); // Guardamos el ID del usuario
+        } else {
+          console.error('Error al obtener el nombre del usuario:', response.status);
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
       }
-    } catch (error) {
-      console.error('Error en la solicitud:', error);
+    } else {
+      console.log('No hay token disponible');
     }
   }
 };
+
 
 // Función para generar el reporte
 const generateReport = () => {
@@ -79,13 +88,23 @@ const generateReport = () => {
       body: JSON.stringify(data),
     })
       .then(response => response.blob())  // Esperar una respuesta de tipo binario (PDF)
+
       .then(blob => {
-        // Crear un enlace para descargar el PDF
-        const url = window.URL.createObjectURL(blob);
+        // Crear un objeto de URL con el contenido del archivo
+        const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
         const link = document.createElement('a');
+
+        // Asignar la URL y forzar el nombre del archivo
         link.href = url;
-        link.download = 'reporte_calidad_aire.pdf';  // Nombre del archivo
-        link.click();  // Simula un clic para descargar el archivo
+        link.setAttribute('download', 'reporte_calidad_aire.pdf');
+
+        // Simular clic para descargar
+        document.body.appendChild(link);
+        link.click();
+
+        // Limpieza: eliminar el enlace y liberar el objeto URL
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
       })
       .catch(error => {
         console.error('Error al generar el reporte:', error);
@@ -93,6 +112,8 @@ const generateReport = () => {
       .finally(() => {
         isLoading.value = false; // Desactivar indicador de carga
       });
+
+
   } else {
     console.error('Usuario no autenticado');
   }
@@ -125,7 +146,7 @@ onMounted(() => {
       class="md:flex md:items-center md:px-0 px-6 md:pb-0 pd-10 md:static absolute bg-primary md:w-auto w-full top-14 duration-300 ease-in"
       :class="[open ? 'left-0 rounded-b-lg' : 'left-[-100%]']">
       <li class="md:mx-4 mb-2 md:mb-0" v-for="link in Links" :key="link.name">
-        <NuxtLink :to="link.link" class="text-xl text-hover">{{ link.name }}</NuxtLink>
+        <NuxtLink :to="link.link" class="text-xl text-hover" @click="toggleMenu">{{ link.name }}</NuxtLink>
       </li>
 
       <!-- Ícono de usuario con menú desplegable -->

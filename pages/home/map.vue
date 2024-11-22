@@ -172,24 +172,36 @@ export default {
 </template>
 
 <style scoped>
-/* Contenedor que usa flexbox para alinear los elementos */
+/* Contenedor principal con flexbox */
 .flex-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  height: auto;
+  /* Altura automática por defecto */
 }
 
-/* Mapa y su estilo */
+/* Estilo del mapa */
 .map {
   flex: 1;
   margin-right: 20px;
+  border: 2px solid #000;
+  border-radius: 10px;
+  height: 380px;
+  /* Altura estándar para pantallas grandes */
 }
 
-/* Estilo para la tarjeta de información */
+/* Estilo de la tarjeta de información */
 .locality-card {
   flex: 1;
   margin-top: 80px;
-  /* Añadir margen superior para moverla hacia abajo */
+  /* Margen superior en pantallas grandes */
+  padding: 16px;
+  /* Espaciado interno */
+  border: 2px solid #000;
+  border-radius: 10px;
+  height: auto;
+  /* Ajusta la altura según el contenido */
 }
 
 /* Contenedor del spinner centrado */
@@ -221,6 +233,7 @@ export default {
   animation: fadeIn 2s ease-in-out;
 }
 
+/* Animaciones */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -238,6 +251,42 @@ export default {
 
   100% {
     opacity: 1;
+  }
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 640px) {
+  .flex-container {
+    flex-direction: column;
+    /* Cambia a diseño en columna */
+    align-items: stretch;
+    /* Asegura que los hijos ocupen todo el ancho */
+    height: 100vh;
+    /* Ocupa toda la altura de la pantalla */
+  }
+
+  .locality-card {
+    width: calc(100% - 40px);
+    /* Reduce el ancho para dejar espacio en los bordes */
+    margin: 8px auto;
+    /* Espaciado entre el mapa y la tarjeta */
+    padding: 6px;
+    /* Reduce el padding */
+    overflow-y: auto;
+    /* Habilita scroll si el contenido es demasiado largo */
+    background-color: #ffffff;
+    /* Fondo blanco */
+    height: auto;
+    /* Deja que la tarjeta ajuste su altura según el contenido */
+  }
+
+  .map {
+    height: 80%;
+    /* Ajusta el mapa para ocupar más espacio */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
   }
 }
 </style>
