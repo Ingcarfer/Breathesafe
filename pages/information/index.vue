@@ -5,7 +5,7 @@ definePageMeta({
   middleware: 'auth'
 });
 useHead({
-  title: "Información",
+  title: "Information",
 });
 
 const pdfUrl = ref(null);

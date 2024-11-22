@@ -1,6 +1,4 @@
 <script setup>
-
-
 // Definir el layout para esta página
 definePageMeta({
   layout: 'lindex',
@@ -8,10 +6,11 @@ definePageMeta({
 
 // Establecer el título de la página
 useHead({
-  title: 'BreatheSafe - Inicio'
+  title: 'BreatheSafe'
 });
 
 </script>
+
 <template>
   <div class="px-10 flex flex-1 justify-center py-5">
     <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
@@ -110,7 +109,5 @@ useHead({
 
 
 </template>
-
-
 
 <style scoped></style>

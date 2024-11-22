@@ -3,7 +3,7 @@ definePageMeta({
   middleware: 'auth', // Aplica el middleware de autenticación
 });
 useHead({
-  title: "Estadísticas",
+  title: "Statistics",
 });
 import { onMounted, nextTick, ref } from 'vue';
 import { useAirQualityStore } from '@/stores/airQuality';
@@ -123,7 +123,6 @@ function initializeCharts() {
   });
 }
 </script>
-
 
 <template>
   <div class="relative flex flex-col min-h-screen w-full bg-[#f8fbfb] overflow-x-hidden px-4 sm:px-6 lg:px-8 py-5">

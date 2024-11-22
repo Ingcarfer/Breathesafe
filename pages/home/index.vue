@@ -6,7 +6,7 @@ import LocationGrid from '@/components/Location/LocationGrid.vue';
 
 // Define los metadatos de la página
 useHead({
-  title: 'Inicio',
+  title: 'Home',
   meta: [
     { name: 'description', content: 'Monitoreo de la calidad del aire en Bogotá' },
   ],
