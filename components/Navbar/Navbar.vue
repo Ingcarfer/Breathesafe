@@ -40,7 +40,7 @@ const logout = () => {
 const fetchUsername = async () => {
   if (process.client) {
     const token = localStorage.getItem('token');
-    console.log('Token recibido:', token);
+    //console.log('Token recibido:', token);
     if (token) {
       try {
         const url = config.public.apiUrl + "/users/me";

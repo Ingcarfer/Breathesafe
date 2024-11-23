@@ -1,69 +1,139 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useAirQualityStore } from '@/stores/airQualityStore';
+<script>
+import { useAirQualityStore } from "~/stores/airQuality";
 import { useRuntimeConfig } from '#app';
 
-definePageMeta({
-  middleware: 'auth', // Aplica el middleware de autenticación
-});
-useHead({
-  title: "Map",
-});
+export default {
+  setup() {
+    definePageMeta({
+      middleware: 'auth', // Aplica el middleware de autenticación
+    });
+    useHead({
+      title: "Map",
+    });
+  },
+  data() {
+    return {
+      coordinates: null, // Coordenadas del clic
+      airQuality: null, // Calidad del aire en las coordenadas
+      generalAirQuality: null, // Calidad del aire general
+      generalAirQualityData: { aqi: "", humidity: "", temperature: "" }, // Datos generales
+      userInteracted: false, // Bandera para saber si el usuario ha interactuado
+      isLoadingGeneralAirQuality: true, // Estado de carga para calidad general
+    };
+  },
+  mounted() {
+    const airQualityStore = useAirQualityStore();
 
-// Variables reactivas
-const coordinates = ref(null);
-const airQuality = ref(null);
-const generalAirQuality = ref(null);
-const generalAirQualityData = ref({
-  aqi: "",
-  humidity: "",
-  temperature: "",
-});
-const userInteracted = ref(false);
-const isLoadingGeneralAirQuality = ref(true);
+    // Watch para los datos del store
+    this.$watch(
+      () => airQualityStore.localities,
+      (newLocalities) => {
+        if (newLocalities.length > 0) {
+          this.generalAirQuality = airQualityStore.overallAirQuality;
+          this.generalAirQualityData = newLocalities[0];
+          this.isLoadingGeneralAirQuality = false; // Datos cargados
+        }
+      },
+      { immediate: true } // Ejecutar al montar
+    );
 
-// Función para obtener la calidad del aire
-async function getAirQuality(lat, lng) {
-  const config = useRuntimeConfig();
-  try {
-    const url = `${config.public.apiUrl}/nearest-sensor-data/${lat}/${lng}`;
-    const response = await fetch(url);
+    // Cargar el script de Google Maps dinámicamente
+    const config = useRuntimeConfig();
+    const script = document.createElement("script");
 
-    const data = await response.json();
+    script.src = config.public.mapUrl; // Asegúrate de que 'mapUrl' está configurado correctamente
+    script.async = true;
+    script.defer = true;
 
-    if (data && data.aqi !== undefined && data.humidity !== undefined) {
-      airQuality.value = {
-        aqi: data.aqi,
-        humidity: data.humidity,
-        temperature: data.temperature,
-        locality_name: data.locality_name,
-        distance: data.distance,
+    script.onload = () => {
+      const bogotaBounds = {
+        north: 5.0,
+        south: 4.3,
+        west: -74.5,
+        east: -73.8,
       };
-    } else {
-      airQuality.value = null;
-    }
-  } catch (error) {
-    airQuality.value = null;
-    console.error(error);
-  }
-}
 
-// Función para describir la calidad del aire
-function getAirQualityDescription(aqi) {
-  if (aqi === null || aqi === 0 || aqi === '-') return ''; // No mostrar descripción si no hay datos válidos
-  if (aqi <= 50) return 'Buena';
-  if (aqi <= 100) return 'Moderada';
-  if (aqi <= 150) return 'Dañina para grupos sensibles';
-  if (aqi <= 200) return 'Dañina';
-  if (aqi <= 300) return 'Muy dañina';
-  return 'Peligrosa';
-}
+      // Inicializar el mapa
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 4.711, lng: -74.0721 },
+        zoom: 12,
+        mapTypeControl: false, // Ocultar control de tipo de mapa
+        streetViewControl: false, // Ocultar Street View
+        restriction: {
+          latLngBounds: bogotaBounds,
+          strictBounds: true, // Limitar estrictamente el área
+        },
+      });
 
-// Lógica para ejecutar al montar el componente
-onMounted(() => {
-  const airQualityStore = useAirQualityStore();
-  // Código adicional que necesites en el montaje
-});
+      let marker = null;
+
+      // Escuchar el clic en el mapa
+      map.addListener("click", (e) => {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+
+        // Guardar las coordenadas
+        this.coordinates = { lat, lng };
+        this.userInteracted = true;
+
+        // Mostrar marcador en el clic
+        if (marker) marker.setMap(null); // Eliminar marcador previo
+        marker = new google.maps.Marker({
+          position: { lat, lng },
+          map,
+          icon: {
+            url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png", // Estilo de gota invertida
+            scaledSize: new google.maps.Size(40, 40), // Tamaño ajustado
+          },
+        });
+
+        // Obtener datos de calidad del aire
+        this.getAirQuality(lat, lng);
+      });
+    };
+
+    document.head.appendChild(script);
+  },
+  methods: {
+    // Método para obtener la calidad del aire en las coordenadas
+    async getAirQuality(lat, lng) {
+      const config = useRuntimeConfig();
+      try {
+        const url = `${config.public.apiUrl}/nearest-sensor-data/${lat}/${lng}`;
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        // Si los datos existen y son válidos
+        if (data && data.aqi !== undefined && data.humidity !== undefined) {
+          this.airQuality = {
+            aqi: data.aqi,
+            humidity: data.humidity,
+            temperature: data.temperature,
+            locality_name: data.locality_name,
+            distance: data.distance,
+          };
+        } else {
+          this.airQuality = null;
+        }
+      } catch (error) {
+        this.airQuality = null;
+        console.error(error);
+      }
+    },
+
+    // Descripción del estado de la calidad del aire según AQI
+    getAirQualityDescription(aqi) {
+      if (aqi === null || aqi === 0 || aqi === '-') return ''; // No mostrar descripción si no hay datos válidos
+      if (aqi <= 50) return 'Buena';
+      if (aqi <= 100) return 'Moderada';
+      if (aqi <= 150) return 'Dañina para grupos sensibles';
+      if (aqi <= 200) return 'Dañina';
+      if (aqi <= 300) return 'Muy dañina';
+      return 'Peligrosa';
+    },
+  },
+};
 </script>
 
 <template>

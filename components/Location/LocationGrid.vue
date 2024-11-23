@@ -95,6 +95,26 @@ export default {
   animation: fadeIn 2s ease-in-out;
 }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 /* Estilos para el aviso de uso */
 .notice-container {
   position: relative;
@@ -130,25 +150,5 @@ export default {
 .text-info {
   color: #17a2b8 !important;
   /* Azul claro */
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
 }
 </style>

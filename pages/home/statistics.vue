@@ -2,9 +2,11 @@
 definePageMeta({
   middleware: 'auth', // Aplica el middleware de autenticación
 });
+
 useHead({
   title: "Statistics",
 });
+
 import { onMounted, nextTick, ref } from 'vue';
 import { useAirQualityStore } from '@/stores/airQuality';
 import { Chart, registerables } from 'chart.js';
