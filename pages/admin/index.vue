@@ -1,11 +1,43 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import User from '@/components/Admin/User.vue';
+import Sensor from '@/components/Admin/Sensor.vue';
+
+// Variable reactiva para gestionar la vista activa
+const activeTab = ref('user');
+
+// Definir el layout para esta página
+useHead({
+  title: "Admin",
+});
+</script>
+
 <template>
+  <!-- Contenedor principal con padding y flex para centrar el contenido -->
+  <div class="px-10 flex flex-1 justify-center py-5">
+    <!-- Botones para cambiar entre los componentes -->
+    <div class="flex space-x-4">
+      <button @click="activeTab = 'user'"
+        :class="{ 'button': activeTab === 'user', 'bg-gray-200': activeTab !== 'user' }" class="px-4 py-2 rounded-md">
+        Usuario
+      </button>
+      <button @click="activeTab = 'sensor'"
+        :class="{ 'button': activeTab === 'sensor', 'bg-gray-200': activeTab !== 'sensor' }"
+        class="px-4 py-2 rounded-md">
+        Sensor
 
-  <button class="button">
-    <slot></slot> <!-- Espacio dinámico para contenido personalizado -->
-  </button>
+      </button>
+    </div>
+  </div>
 
+  <!-- Condicional para mostrar el componente seleccionado -->
+  <div class="px-10 flex flex-1 justify-center py-5">
+    <User v-if="activeTab === 'user'" />
+    <Sensor v-if="activeTab === 'sensor'" />
+  </div>
 </template>
-<style>
+
+<style scoped>
 :root {
   --button-bg: #b4f2e5;
   /* Fondo botón igual al azul del fondo */

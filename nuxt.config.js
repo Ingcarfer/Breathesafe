@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     },
   },
   router: {
-    middleware: ['auth'], // Esto asegura que el middleware 'auth' se aplique globalmente
+    middleware: ['auth'], 
   },
   app: {
     head: {
@@ -18,10 +18,6 @@ export default defineNuxtConfig({
         {
           rel: 'stylesheet',
           href: '/assets/css/styles.css'
-        },
-        {
-          rel: 'stylesheet',
-          href: '/assets/css/button.css'
         },
         {
           rel: 'stylesheet',

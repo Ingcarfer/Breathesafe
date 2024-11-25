@@ -107,3 +107,73 @@ i {
 i:hover {
   color: var(--label-hover-color);
 }
+
+/* Estilos comunes para el select */
+select {
+  padding: 1rem; /* Espaciado superior e inferior */
+  font-size: var(--font-size);
+  color: var(--text-color);
+  background-color: var(--input-background); /* Fondo transparente */
+  border: 2px solid var(--input-border-color-default); /* Borde de entrada */
+  border-radius: var(--border-radius); /* Bordes redondeados */
+  background-image: var(--border-gradient); /* Degradado como fondo */
+  background-clip: padding-box; /* No cubrir el área de relleno */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Transición suave para el cambio de color y sombra */
+  -webkit-appearance: none; /* Eliminar apariencia predeterminada de Webkit */
+  -moz-appearance: none; /* Eliminar apariencia predeterminada de Firefox */
+  appearance: none; /* Eliminar estilo predeterminado */
+  padding-right: 2rem; /* Espacio para la flecha personalizada */
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+/* Estilos cuando el select tiene foco */
+select:focus {
+  border: 2px solid var(--input-border-color-focus); /* Cambio de borde al foco */
+  box-shadow: 0 0 0 2px var(--primary-color); /* Sombra alrededor del borde */
+  outline: none; /* Eliminar contorno predeterminado */
+}
+
+/* Estilos al pasar el mouse */
+select:hover {
+  border: 2px solid var(--input-border-color-hover); /* Borde al pasar el mouse */
+}
+
+/* Estilos cuando el placeholder está visible */
+select:placeholder-shown:hover {
+  border: 2px solid var(--input-border-color-hover); /* Borde al pasar el mouse */
+}
+
+/* Mantener la etiqueta dentro del campo */
+select + label {
+  left: 0.75rem;
+  color: var(--label-color);
+  transition: transform 0.2s ease, left 0.2s ease;
+}
+
+/* Estilos de la etiqueta al hacer foco o al mostrar el placeholder */
+select:focus ~ label,
+select:placeholder-shown ~ label {
+  left: 1rem;
+  transform: translateY(-1.5rem) scale(0.75);
+}
+
+/* Sombra personalizada para el select */
+select.custom-shadow {
+  box-shadow: 0 4px 20px var(--box-shadow-color);
+}
+
+/* Opcional: Flecha personalizada */
+select::-ms-expand {
+  display: none; /* Eliminar flecha predeterminada en IE y Edge */
+}
+
+select::after {
+  content: '▼'; /* Carácter de flecha hacia abajo */
+  font-size: 1rem;
+  color: var(--text-color);
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Evitar que la flecha interfiera con la interacción */
+}

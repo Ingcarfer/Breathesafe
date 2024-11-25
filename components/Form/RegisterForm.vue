@@ -89,15 +89,16 @@ const togglePasswordVisibility = () => {
 };
 
 const validateNameSurname = (field) => {
-  const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
-  if (!regex.test(field === 'name' ? name.value : surname.value)) {
-    if (field === 'name') {
-      name.value = name.value.replace(/[0-9]/g, "");
+  const regex = /^[A-Za-z\s]+$/; // Solo letras y espacios
+  if (!regex.test(field === "name" ? name.value : surname.value)) {
+    if (field === "name") {
+      name.value = name.value.replace(/[^A-Za-z\s]/g, ""); // Elimina caracteres inválidos
     } else {
-      surname.value = surname.value.replace(/[0-9]/g, "");
+      surname.value = surname.value.replace(/[^A-Za-z\s]/g, ""); // Elimina caracteres inválidos
     }
   }
 };
+
 
 const validatePassword = () => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/;

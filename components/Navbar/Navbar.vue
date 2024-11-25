@@ -15,6 +15,7 @@ const Links = [
 
 const router = useRouter();
 const username = ref('');
+const isAdmin = ref(false); // Estado para verificar si el usuario es administrador
 const config = useRuntimeConfig();
 
 const toggleMenu = () => {
@@ -28,19 +29,23 @@ const toggleUserMenu = () => {
   userMenuOpen.value = !userMenuOpen.value;
 };
 
+// Función para cerrar el menú de usuario
+const closeUserMenu = () => {
+  userMenuOpen.value = false;
+};
+
 // Función para cerrar sesión
 const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   router.push('/');
-  userMenuOpen.value = false;
+  closeUserMenu(); // Cierra el menú de usuario al cerrar sesión
 };
 
 // Función para obtener el nombre del usuario
 const fetchUsername = async () => {
   if (process.client) {
     const token = localStorage.getItem('token');
-    //console.log('Token recibido:', token);
     if (token) {
       try {
         const url = config.public.apiUrl + "/users/me";
@@ -55,8 +60,9 @@ const fetchUsername = async () => {
         if (response.ok) {
           const data = await response.json();
           username.value = data.data.name;
+          isAdmin.value = data.data.rolId === "1";
           localStorage.setItem('username', data.data.name);
-          localStorage.setItem('userId', data.data.id); // Guardamos el ID del usuario
+          localStorage.setItem('userId', data.data.id);
         } else {
           console.error('Error al obtener el nombre del usuario:', response.status);
         }
@@ -69,16 +75,26 @@ const fetchUsername = async () => {
   }
 };
 
+// Función exclusiva para acciones de administrador
+const adminAction = () => {
+  if (isAdmin.value) {
+    console.log('Acción de administrador ejecutada');
+    router.push('/admin');
+    closeUserMenu(); // Cierra el menú de usuario al hacer la acción de administrador
+  } else {
+    console.warn('Acceso denegado. Usuario no es administrador.');
+  }
+};
 
 // Función para generar el reporte
 const generateReport = () => {
-  const userId = localStorage.getItem('userId'); // Obtenemos el ID desde localStorage
+  const userId = localStorage.getItem('userId');
   if (userId) {
     const data = {
-      userId: userId // Usamos el ID para la solicitud
+      userId: userId
     };
 
-    isLoading.value = true; // Activar indicador de carga
+    isLoading.value = true;
     const url = config.public.apiUrl + "/generateReport";
     fetch(url, {
       method: 'POST',
@@ -87,22 +103,14 @@ const generateReport = () => {
       },
       body: JSON.stringify(data),
     })
-      .then(response => response.blob())  // Esperar una respuesta de tipo binario (PDF)
-
+      .then(response => response.blob())
       .then(blob => {
-        // Crear un objeto de URL con el contenido del archivo
         const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
         const link = document.createElement('a');
-
-        // Asignar la URL y forzar el nombre del archivo
         link.href = url;
         link.setAttribute('download', 'reporte_calidad_aire.pdf');
-
-        // Simular clic para descargar
         document.body.appendChild(link);
         link.click();
-
-        // Limpieza: eliminar el enlace y liberar el objeto URL
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       })
@@ -110,16 +118,13 @@ const generateReport = () => {
         console.error('Error al generar el reporte:', error);
       })
       .finally(() => {
-        isLoading.value = false; // Desactivar indicador de carga
+        isLoading.value = false;
       });
-
-
   } else {
     console.error('Usuario no autenticado');
   }
 };
 
-// Llamar a la función al montar el componente
 onMounted(() => {
   fetchUsername();
 });
@@ -146,7 +151,8 @@ onMounted(() => {
       class="md:flex md:items-center md:px-0 px-6 md:pb-0 pd-10 md:static absolute bg-primary md:w-auto w-full top-14 duration-300 ease-in"
       :class="[open ? 'left-0 rounded-b-lg' : 'left-[-100%]']">
       <li class="md:mx-4 mb-2 md:mb-0" v-for="link in Links" :key="link.name">
-        <NuxtLink :to="link.link" class="text-xl text-hover" @click="toggleMenu">{{ link.name }}</NuxtLink>
+        <NuxtLink :to="link.link" class="text-xl text-hover" @click="toggleMenu; closeUserMenu()">{{ link.name }}
+        </NuxtLink>
       </li>
 
       <!-- Ícono de usuario con menú desplegable -->
@@ -155,8 +161,16 @@ onMounted(() => {
           <i class="bi bi-person-circle"></i>
         </span>
         <!-- Menú desplegable -->
-        <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-3 z-20">
+        <div v-if="userMenuOpen" class="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-lg p-3 z-20">
           <p class="text-gray-700 mb-2">Hola, {{ username }}</p>
+
+          <!-- Botón de administrador, visible solo si isAdmin es true -->
+          <div class="flex items-center">
+            <button v-if="isAdmin" @click="adminAction" class="flex items text-gray-700 text-hover2">
+              <i class="bi bi-person-lock mr-2"></i>
+              Administrar
+            </button>
+          </div>
 
           <!-- Botón para Generar Reporte -->
           <div class="flex items-center">
@@ -178,7 +192,6 @@ onMounted(() => {
 .spinner {
   border: 4px solid transparent;
   border-top: 4px solid #3498db;
-  /* Color personalizado */
   border-radius: 50%;
   width: 20px;
   height: 20px;
