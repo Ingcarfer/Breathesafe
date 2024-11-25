@@ -29,9 +29,10 @@ const toggleUserMenu = () => {
   userMenuOpen.value = !userMenuOpen.value;
 };
 
-// Función para cerrar el menú de usuario
-const closeUserMenu = () => {
-  userMenuOpen.value = false;
+// Función para cerrar ambos menús al hacer clic en un enlace
+const closeMenus = () => {
+  open.value = false; // Cierra el menú principal
+  userMenuOpen.value = false; // Cierra el menú de usuario
 };
 
 // Función para cerrar sesión
@@ -39,7 +40,7 @@ const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
   router.push('/');
-  closeUserMenu(); // Cierra el menú de usuario al cerrar sesión
+  closeMenus(); // Cierra ambos menús
 };
 
 // Función para obtener el nombre del usuario
@@ -80,7 +81,7 @@ const adminAction = () => {
   if (isAdmin.value) {
     console.log('Acción de administrador ejecutada');
     router.push('/admin');
-    closeUserMenu(); // Cierra el menú de usuario al hacer la acción de administrador
+    closeMenus(); // Cierra ambos menús
   } else {
     console.warn('Acceso denegado. Usuario no es administrador.');
   }
@@ -151,7 +152,8 @@ onMounted(() => {
       class="md:flex md:items-center md:px-0 px-6 md:pb-0 pd-10 md:static absolute bg-primary md:w-auto w-full top-14 duration-300 ease-in"
       :class="[open ? 'left-0 rounded-b-lg' : 'left-[-100%]']">
       <li class="md:mx-4 mb-2 md:mb-0" v-for="link in Links" :key="link.name">
-        <NuxtLink :to="link.link" class="text-xl text-hover" @click="toggleMenu; closeUserMenu()">{{ link.name }}
+        <NuxtLink :to="link.link" class="text-xl text-hover" @click="closeMenus">
+          {{ link.name }}
         </NuxtLink>
       </li>
 
