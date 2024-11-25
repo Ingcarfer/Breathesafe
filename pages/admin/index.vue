@@ -5,7 +5,9 @@ import Sensor from '@/components/Admin/Sensor.vue';
 
 // Variable reactiva para gestionar la vista activa
 const activeTab = ref('user');
-
+definePageMeta({
+  middleware: 'auth', // Aplica el middleware de autenticación
+});
 // Definir el layout para esta página
 useHead({
   title: "Admin",
