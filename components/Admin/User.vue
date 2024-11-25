@@ -132,37 +132,39 @@ export default {
     </div>
 
     <!-- Tabla de usuarios -->
-    <table class="table-auto w-full border-collapse border border-gray-300">
-      <thead>
-        <tr class="bg-gray-200">
-          <th class="border border-gray-300 px-4 py-2">ID</th>
-          <th class="border border-gray-300 px-4 py-2">Nombre</th>
-          <th class="border border-gray-300 px-4 py-2">Apellido</th>
-          <th class="border border-gray-300 px-4 py-2">Email</th>
-          <th class="border border-gray-300 px-4 py-2">Rol</th>
-          <th class="border border-gray-300 px-4 py-2">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in filteredUsers" :key="user.id" class="text-center">
-          <td class="border border-gray-300 px-4 py-2">{{ user.id }}</td>
-          <td class="border border-gray-300 px-4 py-2">{{ user.name }}</td>
-          <td class="border border-gray-300 px-4 py-2">{{ user.surname }}</td>
-          <td class="border border-gray-300 px-4 py-2">{{ user.email }}</td>
-          <td class="border border-gray-300 px-4 py-2">
-            {{ user.rolId === "1" ? 'Admin' : user.rolId === "3" ? 'Usuario' : 'Desconocido' }}
-          </td>
-          <td class="border border-gray-300 px-4 py-2">
-            <button class="button bg-blue-500 text-white px-3 py-1 rounded mr-2" @click="openEditModal(user)">
-              Modificar
-            </button>
-            <button class="bg-red-500 text-white px-3 py-1 rounded" @click="openDeletePopup(user)">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="overflow-x-auto">
+      <table class="table-auto w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border border-gray-300 px-4 py-2">ID</th>
+            <th class="border border-gray-300 px-4 py-2">Nombre</th>
+            <th class="border border-gray-300 px-4 py-2">Apellido</th>
+            <th class="border border-gray-300 px-4 py-2">Email</th>
+            <th class="border border-gray-300 px-4 py-2">Rol</th>
+            <th class="border border-gray-300 px-4 py-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="user in filteredUsers" :key="user.id" class="text-center">
+            <td class="border border-gray-300 px-4 py-2">{{ user.id }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ user.name }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ user.surname }}</td>
+            <td class="border border-gray-300 px-4 py-2">{{ user.email }}</td>
+            <td class="border border-gray-300 px-4 py-2">
+              {{ user.rolId === "1" ? 'Admin' : user.rolId === "3" ? 'Usuario' : 'Desconocido' }}
+            </td>
+            <td class="border border-gray-300 px-4 py-2">
+              <button class="button bg-blue-500 text-white px-3 py-1 rounded mr-2" @click="openEditModal(user)">
+                Modificar
+              </button>
+              <button class="bg-red-500 text-white px-3 py-1 rounded" @click="openDeletePopup(user)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Popup para editar usuario -->
     <div v-if="selectedUser" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

@@ -180,35 +180,37 @@ export default {
       </div>
 
       <!-- Tabla de sensores -->
-      <table class="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border border-gray-300 px-4 py-2">ID</th>
-            <th class="border border-gray-300 px-4 py-2">Localidad</th>
-            <th class="border border-gray-300 px-4 py-2">Código</th>
-            <th class="border border-gray-300 px-4 py-2">Latitud</th>
-            <th class="border border-gray-300 px-4 py-2">Longitud</th>
-            <th class="border border-gray-300 px-4 py-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="sensor in filteredSensors" :key="sensor.id" class="text-center">
-            <td class="border border-gray-300 px-4 py-2">{{ sensor.id }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ sensor.localityName }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ sensor.code_sensor }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ sensor.latitude }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ sensor.longitude }}</td>
-            <td class="border border-gray-300 px-4 py-2">
-              <button class="button bg-blue-500 text-white px-3 py-1 rounded mr-2" @click="openEditModal(sensor)">
-                Modificar
-              </button>
-              <button class="bg-red-500 text-white px-3 py-1 rounded" @click="openDeletePopup(sensor)">
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto">
+        <table class="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border border-gray-300 px-4 py-2">ID</th>
+              <th class="border border-gray-300 px-4 py-2">Localidad</th>
+              <th class="border border-gray-300 px-4 py-2">Código</th>
+              <th class="border border-gray-300 px-4 py-2">Latitud</th>
+              <th class="border border-gray-300 px-4 py-2">Longitud</th>
+              <th class="border border-gray-300 px-4 py-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="sensor in filteredSensors" :key="sensor.id" class="text-center">
+              <td class="border border-gray-300 px-4 py-2">{{ sensor.id }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ sensor.localityName }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ sensor.code_sensor }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ sensor.latitude }}</td>
+              <td class="border border-gray-300 px-4 py-2">{{ sensor.longitude }}</td>
+              <td class="border border-gray-300 px-4 py-2">
+                <button class="button bg-blue-500 text-white px-3 py-1 rounded mr-2" @click="openEditModal(sensor)">
+                  Modificar
+                </button>
+                <button class="bg-red-500 text-white px-3 py-1 rounded" @click="openDeletePopup(sensor)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Popup para editar sensor -->
       <div v-if="selectedSensor" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

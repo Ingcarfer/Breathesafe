@@ -5,9 +5,11 @@ import Sensor from '@/components/Admin/Sensor.vue';
 
 // Variable reactiva para gestionar la vista activa
 const activeTab = ref('user');
+
 definePageMeta({
   middleware: 'auth', // Aplica el middleware de autenticación
 });
+
 // Definir el layout para esta página
 useHead({
   title: "Admin",
@@ -15,27 +17,28 @@ useHead({
 </script>
 
 <template>
-  <!-- Contenedor principal con padding y flex para centrar el contenido -->
-  <div class="px-10 flex flex-1 justify-center py-5">
+  <!-- Contenedor principal: flex-col en pantallas pequeñas -->
+  <div
+    class="px-5 sm:px-10 flex flex-col sm:flex-row justify-center items-center py-5 space-y-4 sm:space-y-0 sm:space-x-4">
     <!-- Botones para cambiar entre los componentes -->
-    <div class="flex space-x-4">
+    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
       <button @click="activeTab = 'user'"
-        :class="{ 'button': activeTab === 'user', 'bg-gray-200': activeTab !== 'user' }" class="px-4 py-2 rounded-md">
+        :class="{ 'button': activeTab === 'user', 'bg-gray-200': activeTab !== 'user' }"
+        class="w-full sm:w-auto px-4 py-2 rounded-md text-center">
         Usuario
       </button>
       <button @click="activeTab = 'sensor'"
         :class="{ 'button': activeTab === 'sensor', 'bg-gray-200': activeTab !== 'sensor' }"
-        class="px-4 py-2 rounded-md">
+        class="w-full sm:w-auto px-4 py-2 rounded-md text-center">
         Sensor
-
       </button>
     </div>
   </div>
 
-  <!-- Condicional para mostrar el componente seleccionado -->
-  <div class="px-10 flex flex-1 justify-center py-5">
-    <User v-if="activeTab === 'user'" />
-    <Sensor v-if="activeTab === 'sensor'" />
+  <!-- Componente seleccionado: ajustable para pantallas pequeñas -->
+  <div class="px-5 sm:px-10 flex flex-col items-center py-5 w-full">
+    <User v-if="activeTab === 'user'" class="w-full sm:w-auto" />
+    <Sensor v-if="activeTab === 'sensor'" class="w-full sm:w-auto" />
   </div>
 </template>
 
@@ -63,32 +66,39 @@ useHead({
   /* Duración de la transición */
 }
 
+/* Botón responsivo */
 .button {
   background-color: var(--button-bg);
   color: var(--button-text-color);
   font-size: var(--button-font-size);
   padding: var(--button-padding-y) var(--button-padding-x);
   border: 2px solid var(--button-border-color);
-  /* Agregar el borde del botón */
   border-radius: var(--button-border-radius);
-  transition: background-color var(--button-transition),
-    border-color var(--button-transition);
-  /* Añadir transición para el color del borde */
+  transition: background-color var(--button-transition), border-color var(--button-transition);
+  width: 100%;
+  /* Ancho completo en pantallas pequeñas */
 }
 
 .button:hover {
   background-color: var(--button-bg-hover);
-  /* Cambia al verde al hacer hover */
+  border-color: #357abd;
 }
 
 .button:active {
   background-color: var(--button-bg-active);
-  /* Cambia a un verde más intenso al presionar */
 }
 
-/* Cambiar el color del borde al hacer hover */
-.button:hover {
-  border-color: #357abd;
-  /* Cambia el color del borde al hacer hover */
+/* Contenedor principal */
+div {
+  width: 100%;
+  /* Ajusta al 100% en pantallas pequeñas */
+}
+
+/* Diseño responsivo para pantallas pequeñas */
+@media (min-width: 640px) {
+  .button {
+    width: auto;
+    /* Botones se ajustan automáticamente en pantallas grandes */
+  }
 }
 </style>
