@@ -140,18 +140,21 @@ export default {
         console.error(error);
       }
     },
+    // Método para obtener la ubicación actual del usuario
     getCurrentLocation() {
       this.locationError = false; // Reinicia el error de ubicación
+
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
 
-            // Actualiza las coordenadas y llama a getAirQuality directamente
+            // Actualiza las coordenadas
             this.coordinates = { lat: latitude, lng: longitude };
             this.userInteracted = true;
+            this.isCurrentLocation = true;
 
-            // Reubica el mapa y marcador
+            // Reubica el marcador
             if (this.marker) this.marker.setMap(null); // Elimina marcador anterior
             this.marker = new google.maps.Marker({
               position: { lat: latitude, lng: longitude },
@@ -162,16 +165,15 @@ export default {
               },
             });
 
-            // Actualiza el centro del mapa
+            // Centra el mapa en las nuevas coordenadas
             this.map.setCenter({ lat: latitude, lng: longitude });
 
-            // Obtiene la calidad del aire
+            // Llama a la función para obtener la calidad del aire
             this.getAirQuality(latitude, longitude);
-            this.isCurrentLocation = true;
           },
           (error) => {
             console.error("Error obteniendo ubicación: ", error.message);
-            this.locationError = true; // Muestra el error de ubicación
+            this.locationError = true; // Indica un error al obtener ubicación
           }
         );
       } else {
