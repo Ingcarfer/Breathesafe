@@ -23,9 +23,22 @@ export default {
       marker: null,
       isCurrentLocation: false, // Nuevo: Indica si se está usando la ubicación actual
       locationError: false, // Nuevo: Muestra error si no se obtiene la ubicación
+      isLocationEnabled: false,
     };
   },
   mounted() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        () => {
+          this.isLocationEnabled = true; // Ubicación habilitada
+        },
+        () => {
+          this.isLocationEnabled = false; // Ubicación no habilitada
+        }
+      );
+    } else {
+      this.isLocationEnabled = false; // Geolocalización no soportada
+    }
     const airQualityStore = useAirQualityStore();
 
     // Watch para los datos del store
@@ -86,7 +99,7 @@ export default {
           position: { lat, lng },
           map,
           icon: {
-            url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png", // Estilo de gota invertida
+            url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", // Estilo de gota invertida
             scaledSize: new google.maps.Size(40, 40), // Tamaño ajustado
           },
         });
@@ -97,6 +110,8 @@ export default {
     };
 
     document.head.appendChild(script);
+
+
   },
   methods: {
     // Método para obtener la calidad del aire en las coordenadas
@@ -131,8 +146,27 @@ export default {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            this.handleLocationClick(latitude, longitude);
+
+            // Actualiza las coordenadas y llama a getAirQuality directamente
+            this.coordinates = { lat: latitude, lng: longitude };
+            this.userInteracted = true;
+
+            // Reubica el mapa y marcador
+            if (this.marker) this.marker.setMap(null); // Elimina marcador anterior
+            this.marker = new google.maps.Marker({
+              position: { lat: latitude, lng: longitude },
+              map: this.map,
+              icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                scaledSize: new google.maps.Size(40, 40),
+              },
+            });
+
+            // Actualiza el centro del mapa
             this.map.setCenter({ lat: latitude, lng: longitude });
+
+            // Obtiene la calidad del aire
+            this.getAirQuality(latitude, longitude);
             this.isCurrentLocation = true;
           },
           (error) => {
@@ -145,6 +179,7 @@ export default {
         this.locationError = true;
       }
     },
+
     // Descripción del estado de la calidad del aire según AQI
     getAirQualityDescription(aqi) {
       if (aqi === null || aqi === 0 || aqi === '-') return ''; // No mostrar descripción si no hay datos válidos
@@ -207,7 +242,7 @@ export default {
           </div>
         </div>
       </div>
-      <div v-if="locationError" class="button-container">
+      <div class="button-container" v-if="isLocationEnabled">
         <button @click="getCurrentLocation" class="button">Ubicación actual</button>
       </div>
     </div>
