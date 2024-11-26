@@ -19,6 +19,10 @@ export default {
       generalAirQualityData: { aqi: "", humidity: "", temperature: "" }, // Datos generales
       userInteracted: false, // Bandera para saber si el usuario ha interactuado
       isLoadingGeneralAirQuality: true, // Estado de carga para calidad general
+      map: null,
+      marker: null,
+      isCurrentLocation: false, // Nuevo: Indica si se está usando la ubicación actual
+      locationError: false, // Nuevo: Muestra error si no se obtiene la ubicación
     };
   },
   mounted() {
@@ -121,7 +125,26 @@ export default {
         console.error(error);
       }
     },
-
+    getCurrentLocation() {
+      this.locationError = false; // Reinicia el error de ubicación
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            this.handleLocationClick(latitude, longitude);
+            this.map.setCenter({ lat: latitude, lng: longitude });
+            this.isCurrentLocation = true;
+          },
+          (error) => {
+            console.error("Error obteniendo ubicación: ", error.message);
+            this.locationError = true; // Muestra el error de ubicación
+          }
+        );
+      } else {
+        console.error("La geolocalización no es compatible con este navegador.");
+        this.locationError = true;
+      }
+    },
     // Descripción del estado de la calidad del aire según AQI
     getAirQualityDescription(aqi) {
       if (aqi === null || aqi === 0 || aqi === '-') return ''; // No mostrar descripción si no hay datos válidos
@@ -140,44 +163,52 @@ export default {
   <div class="relative flex size-full min-h-[80vh] flex-container bg-[#f8fbfb] px-4 sm:px-6 lg:px-8 py-5">
     <!-- Mapa -->
     <div id="map" class="map" style="height: 380px; width: 100%; border: 2px solid #000; border-radius: 10px;"></div>
+    <div>
 
-    <!-- Información de la calidad del aire -->
-    <div class="bg-main locality-card bg-white shadow-md rounded-lg p-4 mt-5" style="margin-left: 20px;">
-      <div v-if="isLoadingGeneralAirQuality && !coordinates">
-        <!-- Spinner de carga -->
-        <div class="text-center flex justify-center items-center h-full">
-          <div class="loader"></div>
-          <span class="loading-text">Cargando datos generales, por favor espere...</span>
+      <!-- Información de la calidad del aire -->
+      <div class="bg-main locality-card bg-white shadow-md rounded-lg p-4 mt-5" style="margin-left: 20px;">
+        <div v-if="isLoadingGeneralAirQuality && !coordinates">
+          <!-- Spinner de carga -->
+          <div class="text-center flex justify-center items-center h-full">
+            <div class="loader"></div>
+            <span class="loading-text">Cargando datos generales, por favor espere...</span>
+          </div>
+        </div>
+
+        <div v-else-if="generalAirQuality && !coordinates">
+          <!-- Datos de la calidad general -->
+          <h3 class="text-center text-2xl font-bold">Calidad del Aire General (Bogotá)</h3>
+          <p><strong>Calidad del aire:</strong> {{ generalAirQuality }}</p>
+          <p><strong>AQI Promedio:</strong> {{ generalAirQualityData.aqi }}</p>
+          <p><strong>Humedad Promedio:</strong> {{ generalAirQualityData.humidity }}</p>
+          <p><strong>Temperatura Promedio:</strong> {{ generalAirQualityData.temperature }}</p>
+        </div>
+
+        <div v-if="airQuality">
+          <!-- Datos de calidad por coordenadas -->
+          <h3 class="text-center text-2xl font-bold">
+            Calidad del Aire en
+            {{ isCurrentLocation ? "su Ubicación Actual" : "la Ubicación" }}
+          </h3>
+          <p><strong>Calidad del aire:</strong> {{ getAirQualityDescription(airQuality.aqi) }}</p>
+
+          <p><strong>AQI:</strong> {{ airQuality.aqi }}</p>
+          <p><strong>Humedad:</strong> {{ airQuality.humidity }}%</p>
+          <p><strong>Temperatura:</strong> {{ airQuality.temperature }}°C</p>
+          <p><strong>Localidad:</strong> {{ airQuality.locality_name }}</p>
+          <p><strong>Distancia al sensor más cercano:</strong> {{ airQuality.distance }} km</p>
+        </div>
+
+        <div v-else-if="airQuality === null && userInteracted">
+          <!-- Spinner de carga para clic -->
+          <div class="text-center flex justify-center items-center h-full">
+            <div class="loader"></div>
+            <span class="loading-text">Cargando datos, por favor espere...</span>
+          </div>
         </div>
       </div>
-
-      <div v-else-if="generalAirQuality && !coordinates">
-        <!-- Datos de la calidad general -->
-        <h3 class="text-center text-2xl font-bold">Calidad del Aire General (Bogotá)</h3>
-        <p><strong>Calidad del aire:</strong> {{ generalAirQuality }}</p>
-        <p><strong>AQI Promedio:</strong> {{ generalAirQualityData.aqi }}</p>
-        <p><strong>Humedad Promedio:</strong> {{ generalAirQualityData.humidity }}%</p>
-        <p><strong>Temperatura Promedio:</strong> {{ generalAirQualityData.temperature }}°C</p>
-      </div>
-
-      <div v-if="airQuality">
-        <!-- Datos de calidad por coordenadas -->
-        <h3 class="text-center text-2xl font-bold">Calidad del Aire en la Ubicación</h3>
-        <p><strong>Calidad del aire:</strong> {{ getAirQualityDescription(airQuality.aqi) }}</p>
-
-        <p><strong>AQI:</strong> {{ airQuality.aqi }}</p>
-        <p><strong>Humedad:</strong> {{ airQuality.humidity }}%</p>
-        <p><strong>Temperatura:</strong> {{ airQuality.temperature }}°C</p>
-        <p><strong>Localidad:</strong> {{ airQuality.locality_name }}</p>
-        <p><strong>Distancia al sensor más cercano:</strong> {{ airQuality.distance }} km</p>
-      </div>
-
-      <div v-else-if="airQuality === null && userInteracted">
-        <!-- Spinner de carga para clic -->
-        <div class="text-center flex justify-center items-center h-full">
-          <div class="loader"></div>
-          <span class="loading-text">Cargando datos, por favor espere...</span>
-        </div>
+      <div v-if="locationError" class="button-container">
+        <button @click="getCurrentLocation" class="button">Ubicación actual</button>
       </div>
     </div>
   </div>
@@ -300,5 +331,57 @@ export default {
     border-left: 2px solid #000;
     border-right: 2px solid #000;
   }
+}
+
+.button-container {
+  text-align: center;
+  /* Centra el contenido dentro del contenedor */
+  margin-top: 1rem;
+  /* Espacio opcional entre el mensaje y el botón */
+}
+
+:root {
+  --button-bg: #b4f2e5;
+  /* Fondo botón igual al azul del fondo */
+  --button-bg-hover: #7ee3cd;
+  /* Fondo botón al hacer hover (verde del fondo) */
+  --button-bg-active: #65e0c5;
+  /* Fondo botón al presionar (verde más intenso) */
+  --button-text-color: #000000;
+  /* Color del texto */
+  --button-border-color: #4a90e2;
+  /* Color del borde del botón */
+  --button-padding-y: 0.5rem;
+  /* Padding vertical */
+  --button-padding-x: 1rem;
+  /* Padding horizontal */
+  --button-border-radius: 0.5rem;
+  /* Radio del borde */
+  --button-font-size: 0.875rem;
+  /* Tamaño de la fuente */
+  --button-transition: 300ms ease-in-out;
+  /* Duración de la transición */
+}
+
+/* Botón responsivo */
+.button {
+  background-color: var(--button-bg);
+  color: var(--button-text-color);
+  font-size: var(--button-font-size);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  border: 2px solid var(--button-border-color);
+  border-radius: var(--button-border-radius);
+  transition: background-color var(--button-transition), border-color var(--button-transition);
+  width: auto;
+  /* Ancho completo en pantallas pequeñas */
+}
+
+.button:hover {
+  background-color: var(--button-bg-hover);
+  border-color: #357abd;
+}
+
+.button:active {
+  background-color: var(--button-bg-active);
 }
 </style>
